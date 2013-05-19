@@ -2,3 +2,4 @@ build
 .DS_Store
 .dat*
 .repl_history
+*.gem
