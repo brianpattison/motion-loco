@@ -1,0 +1,8 @@
+unless defined?(Motion::Project::Config)
+  raise "This file must be required within a RubyMotion project Rakefile."
+end
+
+require 'motion-redgreen'
+require 'motion-require'
+
+Motion::Require.all(Dir.glob(File.expand_path('../motion-loco/**/*.rb', __FILE__)))

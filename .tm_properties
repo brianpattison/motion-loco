@@ -1,0 +1,6 @@
+excludeInBrowser = "{$excludeInBrowser,build}"
+excludeInFileChooser = "{$excludeInFileChooser,build}"
+excludeInFolderSearch = "{$excludeInFolderSearch,build}"
+
+softTabs = true
+tabSize = 2
