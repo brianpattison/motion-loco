@@ -6,10 +6,9 @@ Gem::Specification.new do |spec|
   spec.version       = Loco::VERSION
   spec.authors       = ["Brian Pattison"]
   spec.email         = ["brian@brianpattison.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
-  spec.license       = ""
+  spec.description   = %q{Library for RubyMotion that includes Ember.js-like bindings, computed properties, and observers.}
+  spec.summary       = %q{Library for RubyMotion that includes Ember.js-like bindings, computed properties, and observers.}
+  spec.homepage      = "https://github.com/brianpattison/motion-loco"
 
   files = []
   files << 'README.md'
