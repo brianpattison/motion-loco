@@ -1,6 +1,9 @@
-# Loco
+# Motion-Loco
 
-TODO: Write a gem description
+Motion-Loco is a library for RubyMotion that includes Ember.js-inspired
+bindings, computed properties, and observers.
+
+Also included is a set of views that are easier to position and size.
 
 ## Installation
 
@@ -18,7 +21,119 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Computed Properties
+
+Computed properties are properties that are computed from one or multiple properties.
+They beat out using a method because they can be observed like any other property.
+
+```ruby
+class Person < Loco::Model
+  property :first_name
+  property :last_name
+  
+  # Computed property for full name that watches for changes
+  # in the object's first_name and last_name properties.
+  property :full_name, lambda{|object|
+    "#{object.first_name} #{object.last_name}"
+  }.property(:first_name, :last_name)
+end
+
+@person = Person.new(
+  first_name: 'Brian',
+  last_name:  'Pattison'
+)
+
+@person.full_name # "Brian Pattison"
+```
+
+### Bindings
+
+Bindings are used to link the property of an object to a property of another object.
+
+```ruby
+class Person < Loco::Model
+  property :first_name
+  property :last_name
+  property :full_name, lambda{|object|
+    "#{object.first_name} #{object.last_name}"
+  }.property(:first_name, :last_name)
+end
+
+@person = Person.new(
+  first_name: 'Brian',
+  last_name:  'Pattison'
+)
+
+@label = Loco::Label.alloc.initWithFrame(
+  textBinding: [@person, 'full_name'],
+  height: 30,
+  top: 20,
+  width: 200
+)
+
+@label.text # Brian Pattison
+```
+
+### Loco::Controller
+
+A `Loco::Controller` is a singleton class that is especially useful for 
+binding objects' properties to view properties.
+
+```ruby
+class PersonController < Loco::Controller
+  property :content
+end
+
+@label = Loco::Label.alloc.initWithFrame(
+  textBinding: 'PersonController.content.full_name',
+  height: 30,
+  top: 20,
+  width: 200
+)
+
+@person = Person.new(
+  first_name: 'Brian',
+  last_name:  'Pattison'
+)
+
+PersonController.content = @person
+
+@label.text # Brian Pattison
+```
+
+### Loco::TableView
+
+A `Loco::TableView` is used for to easily bind a collection of objects
+to a `UITableView` and each item in the collection to a reusable `UITableViewCell`.
+
+```ruby
+class MyTableViewCell < Loco::TableViewCell
+  # The `view_setup` method is called the first time the cell is created.
+  # Bindings can be made to the item assigned to the cell
+  # by binding to `parentView.content`.
+  def view_setup
+    @label = Loco::Label.alloc.initWithFrame(
+      textBinding: 'parentView.content.first_name',
+      height: 30,
+      top: 20,
+      width: 200
+    )
+    self.addSubview(@label)
+  end
+end
+
+class MyTableView < Loco::TableView
+  item_view_class MyTableViewCell
+end
+
+@table_view = MyTableView.alloc.initWithFrame(
+  content: [Person.new(first_name: 'Brian'), Person.new(first_name: 'Kirsten')],
+  bottom: 0,
+  left: 0,
+  right: 0,
+  top: 0
+)
+```
 
 ## Contributing
 
