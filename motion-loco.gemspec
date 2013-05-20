@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.version       = Loco::VERSION
   spec.authors       = ["Brian Pattison"]
   spec.email         = ["brian@brianpattison.com"]
-  spec.description   = %q{Motion-Loco is a library for RubyMotion that includes Ember.js-inspired
+  spec.description   = %q{Motion-Loco is a library for RubyMotion that includes Ember.js inspired
                           bindings, computed properties, and observers.
                           Also included is a set of views that are easier to position and size.
                         }

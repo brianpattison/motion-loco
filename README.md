@@ -1,9 +1,13 @@
 # Motion-Loco
 
-Motion-Loco is a library for RubyMotion that includes Ember.js-inspired
-bindings, computed properties, and observers.
+Motion-Loco is a library for [RubyMotion](http://rubymotion.com) 
+that includes [Ember.js](http://emberjs.com) inspired bindings, 
+computed properties, and observers.
 
 Also included is a set of views that are easier to position and size.
+
+**I'm not using this in production yet. It might be ready, 
+but I feel like it needs some more features to really be useful.**
 
 ## Installation
 
@@ -115,8 +119,9 @@ class MyTableViewCell < Loco::TableViewCell
     @label = Loco::Label.alloc.initWithFrame(
       textBinding: 'parentView.content.first_name',
       height: 30,
-      top: 20,
-      width: 200
+      left: 60,
+      right: 30,
+      top: 5
     )
     self.addSubview(@label)
   end
@@ -134,6 +139,12 @@ end
   top: 0
 )
 ```
+
+## Todo
+
+- Better documentation
+- Test performance
+- Lots of stuff
 
 ## Contributing
 
