@@ -49,7 +49,7 @@ module Loco
     property :content
     
     def content=(value)
-      @content = value
+      super
       self.reloadData
     end
     
@@ -64,12 +64,6 @@ module Loco
     
     def item_view_class
       self.class.send(:get_item_view_class)
-    end
-    
-    # UITableViewDelegate implementation for returning the number sections in the table view.
-    # @return [Integer]
-    def numberOfSectionsInTableView(tableView)
-      1
     end
     
     # UITableViewDelegate implementation for returning the cell at a given indexPath.

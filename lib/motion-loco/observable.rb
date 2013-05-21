@@ -115,10 +115,8 @@ module Loco
     end
 
     def observeValueForKeyPath(key_path, ofObject:target, change:change, context:context)
-      if observer_is_registered?(target, key_path)
-        @observers[target][key_path].each do |proc|
-          proc.call
-        end
+      observers_for(target, key_path).each do |proc|
+        proc.call
       end
     end
     
