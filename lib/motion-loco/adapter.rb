@@ -2,36 +2,38 @@ module Loco
   
   class Adapter
     
-    def create_record(record)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #create_record(record)."
+    def create_record(record, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #create_record(record, &block)."
     end
     
-    def find(record, id)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #find(record, id)."
+    def find(record, id, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #find(record, id, &block)."
     end
     
-    def find_all(type, records)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #find_all(type, records)."
+    def find_all(type, records, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #find_all(type, records, &block)."
     end
     
-    def find_many(type, records, ids)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #find_many(type, records, ids)."
+    def find_many(type, records, ids, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #find_many(type, records, ids, &block)."
     end
     
-    def find_query(type, records, params)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #find_query(type, records, params)."
+    def find_query(type, records, params, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #find_query(type, records, params, &block)."
     end
     
-    def load(record, id, data)
-      record.load(id, data)
+    def load(record, id, data, &block)
+      record.load(id, data) do |loaded_record|
+        yield loaded_record
+      end
     end
     
-    def save_record(record)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #save_record(record)."
+    def save_record(record, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #save_record(record, &block)."
     end
     
-    def delete_record(record)
-      raise NoMethodError, "Loco::Adapter subclasses must implement #delete_record(record)."
+    def delete_record(record, &block)
+      raise NoMethodError, "Loco::Adapter subclasses must implement #delete_record(record, &block)."
     end
     
   end
