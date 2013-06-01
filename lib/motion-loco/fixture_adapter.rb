@@ -12,7 +12,11 @@ module Loco
       fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
       found = fixtures.find{|obj| obj[:id] == id }
       if found
-        yield id, found if block_given?
+        if block_given?
+          yield id, found
+        else
+          found
+        end
       else
         raise Loco::FixtureAdapter::RecordNotFound, "Record with the id `#{id}' could not be loaded."
       end
