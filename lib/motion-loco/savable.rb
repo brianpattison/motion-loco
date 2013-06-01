@@ -1,3 +1,6 @@
+motion_require 'observable'
+motion_require 'record_array'
+
 module Loco
   
   module Savable
@@ -27,6 +30,14 @@ module Loco
       def find(id=nil, &block)
         if id.nil?
           # Return all records
+          records = RecordArray.new
+          adapter = self.get_class_adapter
+          adapter.find_all(self, records) do |data|
+            records.load(self, data) do |loaded_records|
+              yield loaded_records if block_given?
+            end
+          end
+          records
         elsif id.is_a? Array
           # Return records with given ids
         elsif id.is_a? Hash

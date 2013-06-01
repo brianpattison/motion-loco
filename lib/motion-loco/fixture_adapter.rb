@@ -22,6 +22,17 @@ module Loco
       end
     end
     
+    def find_all(type, records, &block)
+      error = Pointer.new(:id)
+      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
+      if block_given?
+        yield fixtures
+      else
+        fixtures
+      end
+    end
+    
   end
   
 end
