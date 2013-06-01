@@ -40,8 +40,24 @@ module Loco
           records
         elsif id.is_a? Array
           # Return records with given ids
+          records = RecordArray.new
+          adapter = self.get_class_adapter
+          adapter.find_many(self, records, id) do |data|
+            records.load(self, data) do |loaded_records|
+              yield loaded_records if block_given?
+            end
+          end
+          records
         elsif id.is_a? Hash
           # Return records matching query
+          records = RecordArray.new
+          adapter = self.get_class_adapter
+          adapter.find_query(self, records, id) do |data|
+            records.load(self, data) do |loaded_records|
+              yield loaded_records if block_given?
+            end
+          end
+          records
         else
           record = self.new(id: id)
           adapter = self.get_class_adapter

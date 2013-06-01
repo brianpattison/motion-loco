@@ -22,12 +22,6 @@ module Loco
       raise NoMethodError, "Loco::Adapter subclasses must implement #find_query(type, records, params, &block)."
     end
     
-    def load(record, id, data, &block)
-      record.load(id, data) do |loaded_record|
-        yield loaded_record
-      end
-    end
-    
     def save_record(record, &block)
       raise NoMethodError, "Loco::Adapter subclasses must implement #save_record(record, &block)."
     end

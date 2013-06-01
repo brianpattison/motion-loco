@@ -33,6 +33,36 @@ module Loco
       end
     end
     
+    def find_many(type, records, ids, &block)
+      error = Pointer.new(:id)
+      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
+      found = fixtures.select{|obj| ids.map(&:to_s).include?(obj[:id].to_s) }
+      if block_given?
+        yield found
+      else
+        found
+      end
+    end
+    
+    def find_query(type, records, params, &block)
+      error = Pointer.new(:id)
+      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
+      found = fixtures.select{|obj| 
+        match = true
+        params.each do |key, value|
+          match = false if obj[key.to_sym] != value
+        end
+        match
+      }
+      if block_given?
+        yield found
+      else
+        found
+      end
+    end
+    
   end
   
 end

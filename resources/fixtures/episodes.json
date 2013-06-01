@@ -22,5 +22,11 @@
     "show_id": 2,
     "episode_number": 41,
     "title": "And more YouTube clips"
+  },
+  {
+    "id": 5,
+    "show_id": 2,
+    "episode_number": 42,
+    "title": "What? You want more clips!?"
   }
 ]
