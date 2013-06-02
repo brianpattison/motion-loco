@@ -1,0 +1,2 @@
+log: tail -f -n 0 log/development.log
+web: bundle exec puma -p 3000 -q

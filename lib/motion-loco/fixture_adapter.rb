@@ -43,12 +43,12 @@ module Loco
       records
     end
     
-    def find_query(type, records, params, &block)
+    def find_query(type, records, query, &block)
       error = Pointer.new(:id)
       file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).select{|obj| 
         match = true
-        params.each do |key, value|
+        query.each do |key, value|
           match = false if obj[key.to_sym] != value
         end
         match
