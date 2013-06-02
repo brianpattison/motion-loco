@@ -10,11 +10,11 @@ module Loco
     end
     alias_method :didLoad, :did_load
     
-    def load(id, data, &block)
+    def load(id, data)
       data.merge!({ id: id })
       self.set_properties(data)
       self.did_load
-      yield self if block_given?
+      self
     end
     
     module ClassMethods
@@ -28,45 +28,30 @@ module Loco
       end
       
       def find(id=nil, &block)
+        adapter = self.get_class_adapter
         if id.nil?
           # Return all records
           records = RecordArray.new
-          adapter = self.get_class_adapter
           adapter.find_all(self, records) do |data|
-            records.load(self, data) do |loaded_records|
-              yield loaded_records if block_given?
-            end
+            yield loaded_records if block_given?
           end
-          records
         elsif id.is_a? Array
           # Return records with given ids
           records = RecordArray.new
-          adapter = self.get_class_adapter
           adapter.find_many(self, records, id) do |data|
-            records.load(self, data) do |loaded_records|
-              yield loaded_records if block_given?
-            end
+            yield loaded_records if block_given?
           end
-          records
         elsif id.is_a? Hash
           # Return records matching query
           records = RecordArray.new
-          adapter = self.get_class_adapter
           adapter.find_query(self, records, id) do |data|
-            records.load(self, data) do |loaded_records|
-              yield loaded_records if block_given?
-            end
+            yield loaded_records if block_given?
           end
-          records
         else
           record = self.new(id: id)
-          adapter = self.get_class_adapter
           adapter.find(record, id) do |id, data|
-            record.load(id, data) do |loaded_record|
-              yield record if block_given?
-            end
+            yield record if block_given?
           end
-          record
         end
       end
       

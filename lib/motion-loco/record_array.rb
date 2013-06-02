@@ -10,15 +10,13 @@ module Loco
     end
     alias_method :didLoad, :did_load
     
-    def load(item_class, data, &block)
+    def load(type, data)
       self.removeAllObjects
-      
       data.each do |item_data|
-        self.addObject(item_class.new(item_data))
+        self.addObject(type.new(item_data))
       end
       self.did_load
-      
-      yield self if block_given?
+      self
     end
     
     def initialize(properties={})

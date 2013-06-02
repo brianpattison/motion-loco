@@ -6,61 +6,64 @@ module Loco
     class RecordNotFound < StandardError
     end
     
+    def create_record(record, &block)
+      raise NoMethodError, "Loco::FixtureAdapter cannot create records."
+    end
+    
     def find(record, id, &block)
       error = Pointer.new(:id)
-      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{record.class.to_s.underscore.pluralize}.json"))
-      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
-      found = fixtures.find{|obj| obj[:id] == id }
-      if found
-        if block_given?
-          yield id, found
-        else
-          found
-        end
+      file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{record.class.to_s.underscore.pluralize}.json"))
+      data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).find{|obj| obj[:id] == id }
+      if data
+        record.load(id, data)
+        yield record if block_given?
+        record
       else
-        raise Loco::FixtureAdapter::RecordNotFound, "Record with the id `#{id}' could not be loaded."
+        raise Loco::FixtureAdapter::RecordNotFound, "#{record.class} with the id `#{id}' could not be loaded."
       end
     end
     
     def find_all(type, records, &block)
       error = Pointer.new(:id)
-      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
-      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
-      if block_given?
-        yield fixtures
-      else
-        fixtures
-      end
+      file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error)
+      records.load(type, data)
+      yield records if block_given?
+      records
     end
     
     def find_many(type, records, ids, &block)
       error = Pointer.new(:id)
-      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
-      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
-      found = fixtures.select{|obj| ids.map(&:to_s).include?(obj[:id].to_s) }
-      if block_given?
-        yield found
-      else
-        found
-      end
+      file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).select{|obj| 
+        ids.map(&:to_s).include?(obj[:id].to_s) 
+      }
+      records.load(type, data)
+      yield records if block_given?
+      records
     end
     
     def find_query(type, records, params, &block)
       error = Pointer.new(:id)
-      data = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
-      fixtures = NSJSONSerialization.JSONObjectWithData(data.to_data, options:JSON_OPTIONS, error:error)
-      found = fixtures.select{|obj| 
+      file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).select{|obj| 
         match = true
         params.each do |key, value|
           match = false if obj[key.to_sym] != value
         end
         match
       }
-      if block_given?
-        yield found
-      else
-        found
-      end
+      records.load(type, data)
+      yield records if block_given?
+      records
+    end
+    
+    def save_record(record, &block)
+      raise NoMethodError, "Loco::FixtureAdapter cannot save records."
+    end
+    
+    def delete_record(record, &block)
+      raise NoMethodError, "Loco::FixtureAdapter cannot delete records."
     end
     
   end
