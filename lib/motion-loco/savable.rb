@@ -32,25 +32,25 @@ module Loco
         if id.nil?
           # Return all records
           records = RecordArray.new
-          adapter.find_all(self, records) do |data|
-            yield loaded_records if block_given?
+          adapter.find_all(self, records) do |records|
+            block.call(records) if block.is_a? Proc
           end
         elsif id.is_a? Array
           # Return records with given ids
           records = RecordArray.new
-          adapter.find_many(self, records, id) do |data|
-            yield loaded_records if block_given?
+          adapter.find_many(self, records, id) do |records|
+            block.call(records) if block.is_a? Proc
           end
         elsif id.is_a? Hash
           # Return records matching query
           records = RecordArray.new
-          adapter.find_query(self, records, id) do |data|
-            yield loaded_records if block_given?
+          adapter.find_query(self, records, id) do |records|
+            block.call(records) if block.is_a? Proc
           end
         else
           record = self.new(id: id)
-          adapter.find(record, id) do |id, data|
-            yield record if block_given?
+          adapter.find(record, id) do |record|
+            block.call(record) if block.is_a? Proc
           end
         end
       end

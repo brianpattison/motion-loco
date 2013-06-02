@@ -1,6 +1,8 @@
 module Loco
   
   class RESTAdapter < Adapter
+    JSON_OPTIONS = NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves | NSJSONReadingAllowFragments
+    
     class RecordNotFound < StandardError
     end
     
@@ -9,39 +11,63 @@ module Loco
     end
     
     def find(record, id, &block)
-      # GET "#{root_url}/#{type.to_s.underscore.pluralize}/#{id}"
-      # 
-      # if data
-      #   record.load(id, data)
-      #   yield record if block_given?
-      #   record
-      # else
-      #   raise Loco::FixtureAdapter::RecordNotFound, "#{record.class} with the id `#{id}' could not be loaded."
-      # end
+      BW::HTTP.get("http://localhost:3000/#{record.class.to_s.underscore.pluralize}/#{id}.json") do |response|
+        if response.ok?
+          error = Pointer.new(:id)
+          data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
+          record.load(id, data[record.class.to_s.underscore])
+          block.call(record) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      record
     end
     
     def find_all(type, records, &block)
-      # "#{root_url}/#{type.to_s.underscore.pluralize}"
-      # 
-      # records.load(type, data)
-      # yield records if block_given?
-      # records
+      BW::HTTP.get("http://localhost:3000/#{type.to_s.underscore.pluralize}.json") do |response|
+        if response.ok?
+          error = Pointer.new(:id)
+          data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
+          records.load(type, data[type.to_s.underscore.pluralize])
+          block.call(records) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      records
     end
     
     def find_many(type, records, ids, &block)
-      # "#{root_url}/#{type.to_s.underscore.pluralize}?ids[]="
-      # 
-      # records.load(type, data)
-      # yield records if block_given?
-      # records
+      BW::HTTP.get("http://localhost:3000/#{type.to_s.underscore.pluralize}.json", { payload: { ids: ids } }) do |response|
+        if response.ok?
+          error = Pointer.new(:id)
+          data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
+          records.load(type, data[type.to_s.underscore.pluralize])
+          block.call(records) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      records
     end
     
     def find_query(type, records, query, &block)
-      # "#{root_url}/#{type.to_s.underscore.pluralize}?query=query"
-      # 
-      # records.load(type, data)
-      # yield records if block_given?
-      # records
+      BW::HTTP.get("http://localhost:3000/#{type.to_s.underscore.pluralize}.json", { payload: { query: query } }) do |response|
+        if response.ok?
+          error = Pointer.new(:id)
+          data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
+          records.load(type, data[type.to_s.underscore.pluralize])
+          block.call(records) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      records
     end
     
     def save_record(record, &block)

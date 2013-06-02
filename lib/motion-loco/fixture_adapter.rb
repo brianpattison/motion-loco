@@ -16,7 +16,7 @@ module Loco
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).find{|obj| obj[:id] == id }
       if data
         record.load(id, data)
-        yield record if block_given?
+        block.call(record) if block.is_a? Proc
         record
       else
         raise Loco::FixtureAdapter::RecordNotFound, "#{record.class} with the id `#{id}' could not be loaded."
@@ -28,7 +28,7 @@ module Loco
       file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error)
       records.load(type, data)
-      yield records if block_given?
+      block.call(records) if block.is_a? Proc
       records
     end
     
@@ -39,7 +39,7 @@ module Loco
         ids.map(&:to_s).include?(obj[:id].to_s) 
       }
       records.load(type, data)
-      yield records if block_given?
+      block.call(records) if block.is_a? Proc
       records
     end
     
@@ -54,7 +54,7 @@ module Loco
         match
       }
       records.load(type, data)
-      yield records if block_given?
+      block.call(records) if block.is_a? Proc
       records
     end
     

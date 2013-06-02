@@ -1,46 +1,60 @@
-describe "Loco::FixtureAdapter" do
+describe "Loco::RESTAdapter" do
   
   it "should be defined" do
     Loco::RESTAdapter.ancestors.member?(Loco::Adapter).should.equal true
   end
   
   it "should accept a block on #find and the loaded record should be returned" do
-    post = Post.find(1) do |loaded_post|
-      
+    @post = Post.find(1) do |post|
+      resume
     end
     
-    comment = Comment.find(1) do |loaded_comment|
-      
+    wait do
+      @post.title.should.equal "My first blog post"
+    end
+  end
+  
+  it "should change the URL route based on the model's class name" do
+    @comment = Comment.find(1) do |comment|
+      resume
+    end
+    
+    wait do
+      @comment.body.should.equal "I love Ruby and iOS!"
     end
   end
   
   it "should return an array of all records for a model using #find without an id" do
-    posts = Post.find do |loaded_posts|
-      
+    @posts = Post.find do |posts|
+      resume
     end
     
-    comments = Comment.find do |loaded_comments|
-      
+    wait do
+      @posts.length.should.equal 2
     end
   end
   
   it "should return an array of records from multiple ids" do
-    posts = Post.find([1, 2]) do |loaded_posts|
-      
+    @comments = Comment.find([2, 3, 5]) do |comments|
+      resume
     end
     
-    comments = Comment.find([2, 3, 5]) do |loaded_comments|
-      
+    wait do
+      @comments.length.should.equal 3
+      @comments.first.body.should.equal "Just use Objective-C!"
+      @comments.last.body.should.equal "What's a Rails app doing in a RubyMotion gem repo??"
     end
   end
   
   it "should return an array of all records matching parameters given as a Hash" do
-    comments = Comment.find(post_id: 1) do |loaded_comments|
-      
+    @comments = Comment.find(post_id: 2) do |comments|
+      resume
     end
     
-    comments = Comment.find(post_id: 2) do |loaded_comments|
-      
+    wait do
+      @comments.length.should.equal 3
+      @comments.first.body.should.equal "Yay! A REST data adapter!"
+      @comments.last.body.should.equal "I do what I want!"
     end
   end
   

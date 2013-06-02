@@ -3,6 +3,8 @@ unless defined?(Motion::Project::Config)
 end
 
 require 'awesome_print_motion'
+require 'bubble-wrap/core'
+require 'bubble-wrap/http'
 require 'motion-require'
 require 'motion-support/inflector'
 
