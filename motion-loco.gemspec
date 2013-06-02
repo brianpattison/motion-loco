@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
                           bindings, computed properties, and observers.
                           Also included is a set of views that are easier to position and size.
                         }
-  spec.summary       = %q{Library for RubyMotion that includes Ember.js-like bindings, computed properties, and observers.}
+  spec.summary       = %q{Library for RubyMotion that includes Ember.js inspired bindings, computed properties, and observers.}
   spec.homepage      = "https://github.com/brianpattison/motion-loco"
   spec.license       = "MIT"
 
@@ -22,7 +22,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "motion-redgreen", "~> 0.1.0"
+  spec.add_dependency "awesome_print_motion", "~> 0.1.0"
   spec.add_dependency "motion-require", "~> 0.0.6"
+  spec.add_dependency "motion-support", "~> 0.2.4"
   spec.add_development_dependency "rake"
 end

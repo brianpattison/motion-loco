@@ -2,7 +2,7 @@ module Loco
   
   # TODO: Determine if logging should happen based on environment
   def self.debug(obj)
-    NSLog(obj.inspect.send(:cyan))
+    ap obj
   end
   
   def self.t(name, *args)

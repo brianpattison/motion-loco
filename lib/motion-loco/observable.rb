@@ -3,9 +3,6 @@ motion_require 'proc'
 module Loco
   
   module Observable
-    COLLECTION_OPERATIONS = [ NSKeyValueChangeInsertion, NSKeyValueChangeRemoval, NSKeyValueChangeReplacement ]
-    DEFAULT_OPTIONS = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-    
     # Used to create observable view controllers.
     def init
       super
@@ -75,7 +72,7 @@ module Loco
     
     def register_observer(target, key_path, &block)
       unless observer_is_registered?(target, key_path)
-        target.addObserver(self, forKeyPath:key_path.to_s, options:DEFAULT_OPTIONS, context:nil) 
+        target.addObserver(self, forKeyPath:key_path.to_s, options:0, context:nil) 
       end
       observers_for(target, key_path) << block
     end
@@ -160,6 +157,7 @@ module Loco
     def self.included(base)
       base.extend(ClassMethods)
     end
+    
   end
   
 end
