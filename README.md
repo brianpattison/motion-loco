@@ -178,9 +178,9 @@ end
 #   }
 # }
 @post = Post.find(1) do |post|
-  @post.id    # 1
-  @post.title # "My first blog post"
-  @post.body  # "Check out RubyMotion!"
+  post.id    # 1
+  post.title # "My first blog post"
+  post.body  # "Check out RubyMotion!"
 end
 
 @post = Post.new(title: 'New! The Loco::RESTAdapter', body: 'Yay! A REST data adapter!')
