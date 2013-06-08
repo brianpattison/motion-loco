@@ -9,6 +9,14 @@ Also included is a set of views that are easier to position and size.
 **I'm not using this in production yet. It might be ready, 
 but I feel like it needs some more features to really be useful.**
 
+## What's New!
+
+### June 7th, 2013
+
+#### Data Adapters
+
+These are still a bit of a work in progress, but [worth](#locofixtureadapter) [checking out](#locorestadapter)!
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -75,7 +83,7 @@ end
   width: 200
 )
 
-@label.text # Brian Pattison
+@label.text # "Brian Pattison"
 ```
 
 ### Loco::Controller
@@ -102,7 +110,7 @@ end
 
 PersonController.content = @person
 
-@label.text # Brian Pattison
+@label.text # "Brian Pattison"
 ```
 
 ### Loco::TableView
@@ -140,10 +148,39 @@ end
 )
 ```
 
+### Loco::FixtureAdapter
+
+```ruby
+class Show < Loco::Model
+  adapter 'Loco::FixtureAdapter'
+  property :title
+end
+
+@show = Show.find(2) # Loads from `resources/fixtures/plural_class_name.json`
+@show.title          # "Brian's Video Clip Show"
+```
+
+### Loco::RESTAdapter
+
+```ruby
+class Post < Loco::Model
+  adapter 'Loco::RESTAdapter', 'http://localhost:3000'
+  property :title
+  property :body
+end
+
+@post = Post.new(title: 'New! The Loco::RESTAdapter', body: 'Yay! A REST data adapter!')
+@post.save do |post|
+  post.id # Yay! It has an ID now!
+end
+```
+
 ## Todo
 
-- Better documentation
-- Test performance
+- State Manager
+- Relationships
+- More Adapters
+    - Core Data (Are SQLite and iCloud also part of this adapter??)
 - Lots of stuff
 
 ## Contributing

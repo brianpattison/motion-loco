@@ -74,11 +74,11 @@ module Loco
     
     module ClassMethods
       
-      def adapter(adapter_class)
+      def adapter(adapter_class, *args)
         if adapter_class.is_a? String
-          @adapter = adapter_class.split('::').inject(Object) {|mod, class_name| mod.const_get(class_name) }.new
+          @adapter = adapter_class.split('::').inject(Object) {|mod, class_name| mod.const_get(class_name) }.new(*args)
         else
-          @adapter = adapter_class.new
+          @adapter = adapter_class.new(*args)
         end
       end
       
