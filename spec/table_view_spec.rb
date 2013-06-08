@@ -6,33 +6,33 @@ class ItemsController < Loco::Controller
   property :content
 end
 
-describe "Loco::TableViewCell" do
+describe "Loco::UI::TableViewCell" do
   
   it "should be defined" do
-    Loco::TableViewCell.ancestors.member?(UITableViewCell).should.equal true
-    Loco::TableViewCell.ancestors.member?(Loco::Observable).should.equal true
+    Loco::UI::TableViewCell.ancestors.member?(UITableViewCell).should.equal true
+    Loco::UI::TableViewCell.ancestors.member?(Loco::Observable).should.equal true
   end
   
   it "should accept a Loco::Model as content" do
     @item = CellItem.new(title: 'RubyMotion')
-    @cell = Loco::TableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:'CELL_ID')  
+    @cell = Loco::UI::TableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:'CELL_ID')  
     @cell.content = @item
     @cell.content.title.should.equal 'RubyMotion'
   end
   
 end
 
-describe "Loco::TableView" do
+describe "Loco::UI::TableView" do
   
   it "should be defined" do
-    Loco::TableView.ancestors.member?(UITableView).should.equal true
-    Loco::TableView.ancestors.member?(Loco::Observable).should.equal true
-    Loco::TableView.ancestors.member?(Loco::Resizable).should.equal true
+    Loco::UI::TableView.ancestors.member?(UITableView).should.equal true
+    Loco::UI::TableView.ancestors.member?(Loco::Observable).should.equal true
+    Loco::UI::TableView.ancestors.member?(Loco::Resizable).should.equal true
   end
   
   it "should accept an array of objects as content" do
     @items = [CellItem.new(title: 'iOS'), CellItem.new(title: 'RubyMotion')]
-    @table_view = Loco::TableView.alloc.initWithFrame(
+    @table_view = Loco::UI::TableView.alloc.initWithFrame(
       bottom: 0,
       left: 0,
       right: 0,
@@ -48,7 +48,7 @@ describe "Loco::TableView" do
   
   it "should be able to bind its content to a Loco::Controller" do
     @items = [CellItem.new(title: 'Bound'), CellItem.new(title: 'Items')]
-    @table_view = Loco::TableView.alloc.initWithFrame(
+    @table_view = Loco::UI::TableView.alloc.initWithFrame(
       content_binding: 'ItemsController.content',
       bottom: 0,
       left: 0,
@@ -64,19 +64,19 @@ describe "Loco::TableView" do
   end
   
   it "should have an item class" do
-    @table_view = Loco::TableView.alloc.initWithFrame(
+    @table_view = Loco::UI::TableView.alloc.initWithFrame(
       bottom: 0,
       left: 0,
       right: 0,
       top: 0
     )
-    @table_view.item_view_class.should.equal Loco::TableViewCell
+    @table_view.item_view_class.should.equal Loco::UI::TableViewCell
   end
 
   # TODO: Test each cell once I figure out how to make it think the cell is visible
   # it "should assign each item to a table view cell" do
   #   @items = [CellItem.new(title: 'iOS'), CellItem.new(title: 'RubyMotion')]
-  #   @table_view = Loco::TableView.alloc.initWithFrame(
+  #   @table_view = Loco::UI::TableView.alloc.initWithFrame(
   #     content: @items,
   #     bottom: 0,
   #     left: 0,
