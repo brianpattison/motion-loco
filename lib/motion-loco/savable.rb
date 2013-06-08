@@ -54,8 +54,12 @@ module Loco
     
     def serialize(options={})
       json = {}
+      properties = self.class.send(:get_class_properties)
+      if options[:include_id] || options[:includeId]
+        properties << :id
+      end
       if options[:root] == false
-        self.class.send(:get_class_properties).each do |key|
+        properties.each do |key|
           json[key.to_sym] = self.send(key)
         end
       else
@@ -65,7 +69,7 @@ module Loco
           root = options[:root].to_sym
         end
         json[root] = {}
-        self.class.send(:get_class_properties).each do |key|
+        properties.each do |key|
           json[root][key.to_sym] = self.send(key)
         end
       end
