@@ -58,4 +58,17 @@ describe "Loco::RESTAdapter" do
     end
   end
   
+  it "should save a new record and assign the ID back to the record" do
+    @post = Post.new(title: "Loco::RESTAdapter can save!", body: "Hopefully.")
+    @post.save do |post|
+      resume
+    end
+    
+    @post.id.nil?.should.equal true
+    
+    wait do
+      @post.id.nil?.should.equal false
+    end
+  end
+  
 end

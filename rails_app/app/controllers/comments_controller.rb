@@ -21,9 +21,11 @@ class CommentsController < ApplicationController
 
   # POST /comments
   def create
+    # Fake saving the comment by assigning an ID
     @comment = Comment.new(params[:comment])
-
-    if @comment.save
+    @comment.id = 10
+    
+    if @comment.valid?
       render json: @comment, status: :created, location: @comment
     else
       render json: @comment.errors, status: :unprocessable_entity
@@ -32,9 +34,12 @@ class CommentsController < ApplicationController
 
   # PUT /comments/1
   def update
-    @comment = Comment.find(params[:id])
-
-    if @comment.update_attributes(params[:comment])
+    # Fake updating the comment by creating
+    # a new comment with the updated params
+    @comment = Comment.new(params[:comment])
+    @comment.id = params[:id]
+    
+    if @comment.valid?
       head :no_content
     else
       render json: @comment.errors, status: :unprocessable_entity
@@ -44,7 +49,8 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   def destroy
     @comment = Comment.find(params[:id])
-    @comment.destroy
+    # Don't actually delete it
+    # @comment.destroy 
 
     head :no_content
   end

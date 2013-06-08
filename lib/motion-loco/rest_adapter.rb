@@ -7,7 +7,31 @@ module Loco
     end
     
     def create_record(record, &block)
-      # POST "#{root_url}/#{type.to_s.underscore.pluralize}"
+      BW::HTTP.post("http://localhost:3000/#{record.class.to_s.underscore.pluralize}.json", { payload: record.serialize(root: true) }) do |response|
+        if response.ok?
+          error = Pointer.new(:id)
+          data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
+          Loco.debug(data)
+          record.load(data[record.class.to_s.underscore][:id], data[record.class.to_s.underscore])
+          block.call(record) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      record
+    end
+    
+    def delete_record(record, &block)
+      BW::HTTP.delete("http://localhost:3000/#{record.class.to_s.underscore.pluralize}/#{record.id}.json") do |response|
+        if response.ok?
+          block.call(record) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      record
     end
     
     def find(record, id, &block)
@@ -70,12 +94,16 @@ module Loco
       records
     end
     
-    def save_record(record, &block)
-      # PUT "#{root_url}/#{type.to_s.underscore.pluralize}/#{record.id}"
-    end
-    
-    def delete_record(record, &block)
-      # DELETE "#{root_url}/#{type.to_s.underscore.pluralize}/#{record.id}" 
+    def update_record(record, &block)
+      BW::HTTP.put("http://localhost:3000/#{record.class.to_s.underscore.pluralize}/#{record.id}.json", { payload: record.serialize(root: true) }) do |response|
+        if response.ok?
+          block.call(record) if block.is_a? Proc
+        else
+          Loco.debug("Responded with #{response.status_code}")
+          Loco.debug(response.error_message)
+        end
+      end
+      record
     end
     
   end

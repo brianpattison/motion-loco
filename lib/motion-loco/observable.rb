@@ -135,7 +135,10 @@ module Loco
     module ClassMethods
       def property(name, proc=nil)
         attr_accessor name
-        unless proc.nil?
+        if proc.nil?
+          @class_properties = get_class_properties
+          @class_properties << name
+        else
           @class_bindings = get_class_bindings
           @class_bindings << { name: name, proc: proc }
         end
@@ -150,6 +153,13 @@ module Loco
       # @return [Array]
       def get_class_bindings
         @class_bindings ||= []
+      end
+      
+      # An array of the model's properties
+      # used for saving the record
+      # @return [Array]
+      def get_class_properties
+        @class_properties ||= []
       end
       
     end

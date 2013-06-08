@@ -21,9 +21,11 @@ class PostsController < ApplicationController
 
   # POST /posts
   def create
+    # Fake saving the post by assigning an ID
     @post = Post.new(params[:post])
-
-    if @post.save
+    @post.id = 10
+    
+    if @post.valid?
       render json: @post, status: :created, location: @post
     else
       render json: @post.errors, status: :unprocessable_entity
@@ -32,9 +34,12 @@ class PostsController < ApplicationController
 
   # PUT /posts/1
   def update
-    @post = Post.find(params[:id])
-
-    if @post.update_attributes(params[:post])
+    # Fake updating the post by creating
+    # a new post with the updated params
+    @post = Post.new(params[:post])
+    @post.id = params[:id]
+    
+    if @post.valid?
       head :no_content
     else
       render json: @post.errors, status: :unprocessable_entity
@@ -44,7 +49,8 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   def destroy
     @post = Post.find(params[:id])
-    @post.destroy
+    # Don't actually delete it
+    # @post.destroy 
 
     head :no_content
   end
