@@ -37,11 +37,11 @@ describe "Loco::FixtureAdapter" do
     end
   end
   
-  it "should return an array of all records for a model using #find without an id" do
-    @shows = Show.find
+  it "should return an array of all records for a model using #all" do
+    @shows = Show.all
     @shows.length.should.equal 2
     
-    @episodes = Episode.find
+    @episodes = Episode.all
     @episodes.length.should.equal 5
   end
   
@@ -58,11 +58,11 @@ describe "Loco::FixtureAdapter" do
   end
   
   it "should return an array of all records matching parameters given as a Hash" do
-    @episodes = Episode.find(show_id: 1)
+    @episodes = Episode.where(show_id: 1)
     @episodes.length.should.equal 2
     @episodes.first.title.should.equal "Watch my show!"
     
-    @episodes = Episode.find(show_id: 2)
+    @episodes = Episode.where(show_id: 2)
     @episodes.length.should.equal 3
     @episodes.first.title.should.equal "Here are some YouTube clips"
   end

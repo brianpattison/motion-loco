@@ -183,7 +183,29 @@ end
   post.body  # "Check out RubyMotion!"
 end
 
-@post = Post.new(title: 'New! The Loco::RESTAdapter', body: 'Yay! A REST data adapter!')
+# GET http://localhost:3000/posts.json
+# {
+#   "posts": [
+#     {
+#       "id": 1,
+#       "title": "My first blog post",
+#       "body": "Check out RubyMotion!"
+#     },
+#     {
+#       "id": 2,
+#       "title": "And for my next post...",
+#       "body": "Like RubyMotion and Ember.js? Check out Motion-Loco on GitHub."
+#     }
+#   ]
+# }
+@posts = Post.all do |posts|
+  posts.length # 2
+end
+
+# Started POST "/posts.json"
+# Processing by PostsController#create as JSON
+# Parameters: {"post"=>{"title"=>"Loco::RESTAdapter can save!", "body"=>"Hopefully."}}
+@post = Post.new(title: 'Loco::RESTAdapter can save!', body: 'Hopefully.')
 @post.save do |post|
   post.id # Yay! It has an ID now!
 end

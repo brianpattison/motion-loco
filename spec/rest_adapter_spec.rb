@@ -36,8 +36,8 @@ describe "Loco::RESTAdapter" do
     end
   end
   
-  it "should return an array of all records for a model using #find without an id" do
-    @posts = Post.find do |posts|
+  it "should return an array of all records for a model using #all" do
+    @posts = Post.all do |posts|
       resume
     end
     
@@ -59,7 +59,7 @@ describe "Loco::RESTAdapter" do
   end
   
   it "should return an array of all records matching parameters given as a Hash" do
-    @comments = Comment.find(post_id: 2) do |comments|
+    @comments = Comment.where(post_id: 2) do |comments|
       resume
     end
     

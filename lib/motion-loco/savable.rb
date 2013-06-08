@@ -109,6 +109,8 @@ module Loco
           end
         end
       end
+      alias_method :all, :find
+      alias_method :where, :find
       
       def get_class_adapter
         @adapter ||= Adapter.new
