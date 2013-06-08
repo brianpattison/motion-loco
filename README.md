@@ -211,10 +211,12 @@ end
 end
 ```
 
-## Todo
+## TODO
 
 - State Manager
 - Relationships
+- Property types/transforms
+- Validations?
 - More Adapters
     - Core Data (Are SQLite and iCloud also part of this adapter??)
 - Lots of stuff
