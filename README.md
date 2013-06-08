@@ -169,6 +169,20 @@ class Post < Loco::Model
   property :body
 end
 
+# GET http://localhost:3000/posts/1.json
+# {
+#   "post": {
+#     "id": 1,
+#     "title": "My first blog post",
+#     "body": "Check out RubyMotion!"
+#   }
+# }
+@post = Post.find(1) do |post|
+  @post.id    # 1
+  @post.title # "My first blog post"
+  @post.body  # "Check out RubyMotion!"
+end
+
 @post = Post.new(title: 'New! The Loco::RESTAdapter', body: 'Yay! A REST data adapter!')
 @post.save do |post|
   post.id # Yay! It has an ID now!
