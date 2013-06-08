@@ -97,7 +97,7 @@ module Loco
   
     # Create the bindings for the computed properties and observers
     def initialize_bindings
-      bindings = self.class.send(:get_class_bindings)
+      bindings = self.class.get_class_bindings
       
       bindings.each do |binding|
         binding[:proc].observed_properties.each do |key_path|
@@ -156,7 +156,13 @@ module Loco
       # An array of the model's bindings
       # @return [Array]
       def get_class_bindings
-        @class_bindings ||= []
+        if @class_bindings.nil?
+          @class_bindings = []
+          if self.superclass.respond_to? :get_class_bindings
+            @class_bindings.concat(self.superclass.get_class_bindings)
+          end
+        end
+        @class_bindings
       end
       
       # An array of the model's properties
