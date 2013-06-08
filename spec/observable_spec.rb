@@ -28,6 +28,13 @@ describe "Loco::Observable" do
       @person.last_name.should.equal 'Pattison'
     end
     
+    it "should inherit properties on subclasses" do
+      class User < Person
+        property :age
+      end
+      User.get_class_properties.should.equal [:first_name, :last_name, :age]
+    end
+    
     it "defined properties should default to nil" do
       @person = Person.new
       @person.first_name.should.equal nil

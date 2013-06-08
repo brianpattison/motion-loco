@@ -134,11 +134,15 @@ module Loco
     
     module ClassMethods
       def property(name, proc=nil)
-        attr_accessor name
-        if proc.nil?
-          @class_properties = get_class_properties
+        name = name.to_sym
+        @class_properties = get_class_properties
+        
+        unless @class_properties.include? name
+          attr_accessor name
           @class_properties << name
-        else
+        end
+        
+        unless proc.nil?
           @class_bindings = get_class_bindings
           @class_bindings << { name: name, proc: proc }
         end
@@ -159,7 +163,13 @@ module Loco
       # used for saving the record
       # @return [Array]
       def get_class_properties
-        @class_properties ||= []
+        if @class_properties.nil?
+          @class_properties = []
+          if self.superclass.respond_to? :get_class_properties
+            @class_properties.concat(self.superclass.get_class_properties)
+          end
+        end
+        @class_properties
       end
       
     end
