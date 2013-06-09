@@ -97,21 +97,21 @@ module Loco
     
     def data_from_results(results, type)
       if results.is_a? Array
-        results.map{|object|
+        transform_data(type, results.map{|object|
           data_item = {}
           type.get_class_properties.each do |property|
             key = property[:name].to_sym
             data_item[key] = object.valueForKey(key)
           end
           data_item
-        }
+        })
       else
         data = {}
         type.get_class_properties.each do |property|
           key = property[:name].to_sym
           data[key] = results.valueForKey(key)
         end
-        data
+        transform_data(type, data)
       end
     end
   

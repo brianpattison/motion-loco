@@ -34,6 +34,11 @@ describe "Loco::Adapter" do
       end
     end
     
+    it "should use registered transforms when loading data" do
+      @episode = Episode.find(1)
+      @episode.episode_number.should.equal 20
+    end
+    
   end
   
   

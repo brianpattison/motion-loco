@@ -15,7 +15,7 @@ module Loco
       file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{record.class.to_s.underscore.pluralize}.json"))
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).find{|obj| obj[:id] == id }
       if data
-        record.load(id, data)
+        record.load(id, transform_data(record.class, data))
         block.call(record) if block.is_a? Proc
         record
       else
@@ -27,7 +27,7 @@ module Loco
       error = Pointer.new(:id)
       file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error)
-      records.load(type, data)
+      records.load(type, transform_data(type, data))
       block.call(records) if block.is_a? Proc
       records
     end
@@ -38,7 +38,7 @@ module Loco
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).select{|obj| 
         ids.map(&:to_s).include?(obj[:id].to_s) 
       }
-      records.load(type, data)
+      records.load(type, transform_data(type, data))
       block.call(records) if block.is_a? Proc
       records
     end
@@ -53,7 +53,7 @@ module Loco
         end
         match
       }
-      records.load(type, data)
+      records.load(type, transform_data(type, data))
       block.call(records) if block.is_a? Proc
       records
     end

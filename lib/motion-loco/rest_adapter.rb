@@ -16,7 +16,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          record.load(data[record.class.to_s.underscore][:id], data[record.class.to_s.underscore])
+          record.load(data[record.class.to_s.underscore][:id], transform_data(record.class, data[record.class.to_s.underscore]))
           block.call(record) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -43,7 +43,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          record.load(id, data[record.class.to_s.underscore])
+          record.load(id, transform_data(record.class, data[record.class.to_s.underscore]))
           block.call(record) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -58,7 +58,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, data[type.to_s.underscore.pluralize])
+          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -73,7 +73,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, data[type.to_s.underscore.pluralize])
+          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -88,7 +88,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, data[type.to_s.underscore.pluralize])
+          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
