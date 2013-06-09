@@ -9,7 +9,7 @@ module Loco
     
     def destroy(&block)
       adapter = self.class.get_class_adapter
-      unless self.id.nil?
+      unless self.new?
         adapter.delete_record(self) do |record|
           block.call(record) if block.is_a? Proc
         end
@@ -22,9 +22,13 @@ module Loco
       self
     end
     
+    def new?
+      self.id.nil?
+    end
+    
     def save(&block)
       adapter = self.class.get_class_adapter
-      if self.id.nil?
+      if self.new?
         adapter.create_record(self) do |record|
           block.call(record) if block.is_a? Proc
         end

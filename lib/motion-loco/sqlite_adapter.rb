@@ -51,7 +51,7 @@ module Loco
     end
     
     def find_many(type, records, ids, &block)
-      data = request(type, { ids: ids })
+      data = request(type, { id: ids })
       load(type, records, data)
       block.call(records) if block.is_a? Proc
       records
@@ -85,11 +85,16 @@ module Loco
     def request(type, query=nil)
       request = NSFetchRequest.new
       request.entity = entity(type)
+      request.sortDescriptors = [NSSortDescriptor.alloc.initWithKey('id', ascending:true)]
       unless query.nil?
         conditions = []
         values = []
         query.each do |key, value|
-          conditions << "#{key} = %@"
+          if value.is_a? Array
+            conditions << "#{key} IN %@"
+          else
+            conditions << "#{key} = %@"
+          end
           values << value
         end
         request.predicate = NSPredicate.predicateWithFormat(conditions.join(' AND '), argumentArray:values) 
@@ -142,7 +147,7 @@ module Loco
     end
     
     def generate_id(type)
-      key = "loco.#{type.to_s.underscore}.last_id"
+      key = "loco.#{type.to_s.underscore.pluralize}.last_id"
       last_id = App::Persistence[key]
       if last_id.nil?
         last_id = 0 
