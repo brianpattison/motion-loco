@@ -61,7 +61,7 @@ module Loco
         end
         records.load(type, transform_data(type, data))
       else
-        if data.is_a?(Hash) && data[type.to_s.underscore]
+        if data.is_a?(Hash) && data.has_key?(type.to_s.underscore)
           data = data[type.to_s.underscore] 
         end
         records.load(data.valueForKey(:id), transform_data(type, data))

@@ -37,11 +37,23 @@ module Loco
     end
     
     # Change one or many properties from a hash of properties with values.
-    # @param [Hash] properties
-    def set_properties(hash)
+    # @param [Hash] properties_hash
+    def set_properties(properties_hash)
       # Set the initial property values from the given hash
-      hash.each do |key, value|
+      properties_hash.each do |key, value|
         self.send("#{key}=", value)
+      end
+    end
+    
+    # Change one or many properties from a hash of properties with values.
+    # Only updates attributes defined with #property.
+    # @param [Hash] properties_hash
+    def update_attributes(properties_hash)
+      self.class.get_class_properties.each do |property|
+        key = property[:name].to_sym
+        if properties_hash.has_key? key
+          self.setValue(properties_hash[key], forKey:key)
+        end
       end
     end
     

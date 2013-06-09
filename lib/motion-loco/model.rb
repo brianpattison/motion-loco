@@ -18,7 +18,7 @@ module Loco
     
     def load(id, data)
       data.merge!({ id: id })
-      self.set_properties(data)
+      self.update_attributes(data)
       self
     end
     

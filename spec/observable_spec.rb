@@ -169,5 +169,31 @@ describe "Loco::Observable" do
       @bound_to_brother.full_name.should.equal 'B Money'
     end
     
+    it "should attempt to set all given properties on #set_properties" do
+      @person = Person.new
+      @person.respond_to?(:twitter).should.equal false
+      
+      should.raise(NoMethodError) do
+        @person.set_properties(
+          first_name: 'Brian',
+          last_name: 'Pattison',
+          twitter: 'brianpattison'
+        )
+      end
+    end
+    
+    it "should ignore undefined properties on #update_attributes" do
+      @person = Person.new
+      @person.respond_to?(:twitter).should.equal false
+      
+      should.not.raise(NoMethodError) do
+        @person.update_attributes(
+          first_name: 'Brian',
+          last_name: 'Pattison',
+          twitter: 'brianpattison'
+        )
+      end
+    end
+    
   end
 end
