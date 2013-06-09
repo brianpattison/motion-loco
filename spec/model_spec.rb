@@ -46,4 +46,11 @@ describe "Loco::Model" do
     @hash[:show][:id].should.equal 1
   end
   
+  it "should use data transforms on serialization" do
+    @show = Episode.new(show_id: '1', title: 1000)
+    @hash = @show.serialize
+    @hash[:episode][:show_id].should.equal 1
+    @hash[:episode][:title].should.equal '1000'
+  end
+  
 end

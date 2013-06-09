@@ -37,28 +37,32 @@ module Loco
     
     def serialize(options={})
       json = {}
-      properties = self.class.get_class_properties.clone
+      properties = self.class.get_class_properties.select{|prop| prop[:type] }
+      transforms = self.class.get_class_adapter.class.get_transforms
       
       unless options[:include_id] || options[:includeId]
         properties.delete(:id)
       end
       
-      if options[:root] == false
-        properties.each do |property|
-          key = property[:name].to_sym
+      properties.each do |property|
+        key = property[:name].to_sym
+        transform = transforms[property[:type]]
+        if transform
+          json[key] = transform[:serialize].call(self.valueForKey(key))
+        else
           json[key] = self.valueForKey(key)
         end
-      else
+      end
+      
+      if options[:root] != false
         if options[:root].nil? || options[:root] == true
           root = self.class.to_s.underscore.to_sym
         else
           root = options[:root].to_sym
         end
-        json[root] = {}
-        properties.each do |property|
-          key = property[:name]
-          json[root][key] = self.valueForKey(key)
-        end
+        temp = {}
+        temp[root] = json
+        json = temp
       end
       json
     end

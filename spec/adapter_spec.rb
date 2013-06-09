@@ -34,6 +34,53 @@ describe "Loco::Adapter" do
       end
     end
     
+    it "should transform dates" do
+      transforms = Loco::Adapter.get_transforms[:date]
+      date = '2013-06-09'
+      
+      date = transforms[:deserialize].call(date)
+      date.is_a?(NSDate).should.equal true
+      
+      date = transforms[:serialize].call(date)
+      date.should.equal '2013-06-09'
+    end
+    
+    it "should transform floats" do
+      transforms = Loco::Adapter.get_transforms[:float]
+      
+      float = '12.34567'
+      float = transforms[:deserialize].call(float)
+      float.should.equal 12.34567
+      
+      float = '34.56789'
+      float = transforms[:serialize].call(float)
+      float.should.equal 34.56789
+    end
+    
+    it "should transform integers" do
+      transforms = Loco::Adapter.get_transforms[:integer]
+      
+      integer = '1234567'
+      integer = transforms[:deserialize].call(integer)
+      integer.should.equal 1234567
+      
+      integer = '3456789'
+      integer = transforms[:serialize].call(integer)
+      integer.should.equal 3456789
+    end
+    
+    it "should transform strings" do
+      transforms = Loco::Adapter.get_transforms[:string]
+      
+      string = 1234567
+      string = transforms[:deserialize].call(string)
+      string.should.equal '1234567'
+      
+      string = 3456789
+      string = transforms[:serialize].call(string)
+      string.should.equal '3456789'
+    end
+    
     it "should use registered transforms when loading data" do
       @episode = Episode.find(1)
       @episode.episode_number.should.equal 20

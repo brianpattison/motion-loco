@@ -12,11 +12,12 @@ module Loco
     end
     
     def create_record(record, &block)
-      BW::HTTP.post("#{self.url}/#{record.class.to_s.underscore.pluralize}.json", { payload: record.serialize(root: true) }) do |response|
+      type = record.class
+      BW::HTTP.post("#{self.url}/#{type.to_s.underscore.pluralize}.json", { payload: record.serialize }) do |response|
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          record.load(data[record.class.to_s.underscore][:id], transform_data(record.class, data[record.class.to_s.underscore]))
+          load(type, record, data)
           block.call(record) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -27,7 +28,8 @@ module Loco
     end
     
     def delete_record(record, &block)
-      BW::HTTP.delete("#{self.url}/#{record.class.to_s.underscore.pluralize}/#{record.id}.json") do |response|
+      type = record.class
+      BW::HTTP.delete("#{self.url}/#{type.to_s.underscore.pluralize}/#{record.id}.json") do |response|
         if response.ok?
           block.call(record) if block.is_a? Proc
         else
@@ -39,11 +41,12 @@ module Loco
     end
     
     def find(record, id, &block)
-      BW::HTTP.get("#{self.url}/#{record.class.to_s.underscore.pluralize}/#{id}.json") do |response|
+      type = record.class
+      BW::HTTP.get("#{self.url}/#{type.to_s.underscore.pluralize}/#{id}.json") do |response|
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          record.load(id, transform_data(record.class, data[record.class.to_s.underscore]))
+          load(type, record, data)
           block.call(record) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -58,7 +61,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
+          load(type, records, data)
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -73,7 +76,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
+          load(type, records, data)
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -88,7 +91,7 @@ module Loco
         if response.ok?
           error = Pointer.new(:id)
           data = NSJSONSerialization.JSONObjectWithData(response.body, options:JSON_OPTIONS, error:error)
-          records.load(type, transform_data(type, data[type.to_s.underscore.pluralize]))
+          load(type, records, data)
           block.call(records) if block.is_a? Proc
         else
           Loco.debug("Responded with #{response.status_code}")
@@ -99,7 +102,8 @@ module Loco
     end
     
     def update_record(record, &block)
-      BW::HTTP.put("#{self.url}/#{record.class.to_s.underscore.pluralize}/#{record.id}.json", { payload: record.serialize(root: true) }) do |response|
+      type = record.class
+      BW::HTTP.put("#{self.url}/#{type.to_s.underscore.pluralize}/#{record.id}.json", { payload: record.serialize }) do |response|
         if response.ok?
           block.call(record) if block.is_a? Proc
         else
