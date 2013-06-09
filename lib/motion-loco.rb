@@ -9,3 +9,7 @@ require 'motion-require'
 require 'motion-support/inflector'
 
 Motion::Require.all(Dir.glob(File.expand_path('../motion-loco/**/*.rb', __FILE__)))
+
+Motion::Project::App.setup do |app|
+  app.frameworks += ['CoreData']
+end

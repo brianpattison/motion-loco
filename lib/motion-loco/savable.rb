@@ -20,6 +20,11 @@ module Loco
     end
     alias_method :didCreate, :did_create
     
+    def did_delete
+      # Override to perform actions after deleting the record
+    end
+    alias_method :didCreate, :did_create
+    
     def did_load
       # Override to perform actions after loading data
     end
@@ -62,7 +67,7 @@ module Loco
       
       if options[:root] == false
         properties.each do |key|
-          json[key.to_sym] = self.send(key)
+          json[key.to_sym] = self.valueForKey(key)
         end
       else
         if options[:root].nil? || options[:root] == true
@@ -72,7 +77,7 @@ module Loco
         end
         json[root] = {}
         properties.each do |key|
-          json[root][key.to_sym] = self.send(key)
+          json[root][key.to_sym] = self.valueForKey(key)
         end
       end
       json

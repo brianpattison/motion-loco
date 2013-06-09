@@ -63,7 +63,7 @@ module Loco
     end
     
     def item_view_class
-      self.class.send(:get_item_view_class)
+      self.class.get_item_view_class
     end
     
     # UITableViewDelegate implementation for returning the cell at a given indexPath.

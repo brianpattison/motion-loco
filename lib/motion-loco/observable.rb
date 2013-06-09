@@ -61,9 +61,9 @@ module Loco
           target = args.first.first
           key_path = args.first.last
         end
-        self.send("#{method}=", target.valueForKeyPath(key_path))
+        self.setValue(target.valueForKeyPath(key_path), forKey:method)
         register_observer(target, key_path) do
-          self.send("#{method}=", target.valueForKeyPath(key_path))
+          self.setValue(target.valueForKeyPath(key_path), forKey:method)
         end
       else
         super
@@ -104,7 +104,7 @@ module Loco
           register_observer(self, key_path) do
             new_value = binding[:proc].call(self)
             if binding[:name]
-              self.send("#{binding[:name]}=", new_value)
+              self.setValue(new_value, forKey:binding[:name])
             end
           end
         end
