@@ -1,7 +1,6 @@
 module Loco
   
   class SQLiteAdapter < Adapter
-    # TODO: Use NSPredicate on #delete_record, #find, #find_many, #find_query, #update_record
     
     class RecordNotFound < StandardError
     end
@@ -10,7 +9,8 @@ module Loco
       record.id = generate_id(record.class)
       object = NSEntityDescription.insertNewObjectForEntityForName(record.class.to_s, inManagedObjectContext:context(record.class))
       record.class.get_class_properties.each do |property|
-        object.setValue(record.valueForKey(property).to_s, forKey:property)
+        key = property[:name].to_sym
+        object.setValue(record.valueForKey(key).to_s, forKey:key)
       end
       save_data_for_type(record.class)
       block.call(record) if block.is_a? Proc
@@ -65,7 +65,8 @@ module Loco
       object = objects_for_type(record.class, { id: record.id }).first
       if object
         record.class.get_class_properties.each do |property|
-          object.setValue(record.valueForKey(property), forKey:property)
+          key = property[:name].to_sym
+          object.setValue(record.valueForKey(key), forKey:key)
         end
         save_data_for_type(record.class)
         block.call(record) if block.is_a? Proc
@@ -98,15 +99,17 @@ module Loco
       if results.is_a? Array
         results.map{|object|
           data_item = {}
-          type.get_class_properties.each do |key|
-            data_item[key.to_sym] = object.valueForKey(key)
+          type.get_class_properties.each do |property|
+            key = property[:name].to_sym
+            data_item[key] = object.valueForKey(key)
           end
           data_item
         }
       else
         data = {}
-        type.get_class_properties.each do |key|
-          data[key.to_sym] = results.valueForKey(key)
+        type.get_class_properties.each do |property|
+          key = property[:name].to_sym
+          data[key] = results.valueForKey(key)
         end
         data
       end
@@ -135,7 +138,7 @@ module Loco
         entity.name = type.to_s
         entity.properties = type.get_class_properties.map{|class_property|
           property = NSAttributeDescription.new
-          property.name = class_property.to_s
+          property.name = class_property[:name].to_s
           property.attributeType = NSStringAttributeType
           property
         }

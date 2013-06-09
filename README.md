@@ -40,8 +40,8 @@ They beat out using a method because they can be observed like any other propert
 
 ```ruby
 class Person < Loco::Model
-  property :first_name
-  property :last_name
+  property :first_name, :string
+  property :last_name, :string
   
   # Computed property for full name that watches for changes
   # in the object's first_name and last_name properties.
@@ -64,8 +64,8 @@ Bindings are used to link the property of an object to a property of another obj
 
 ```ruby
 class Person < Loco::Model
-  property :first_name
-  property :last_name
+  property :first_name, :string
+  property :last_name, :string
   property :full_name, lambda{|object|
     "#{object.first_name} #{object.last_name}"
   }.property(:first_name, :last_name)
@@ -153,7 +153,7 @@ end
 ```ruby
 class Show < Loco::Model
   adapter 'Loco::FixtureAdapter'
-  property :title
+  property :title, :string
 end
 
 @show = Show.find(2) # Loads from `resources/fixtures/plural_class_name.json`
@@ -165,8 +165,8 @@ end
 ```ruby
 class Post < Loco::Model
   adapter 'Loco::RESTAdapter', 'http://localhost:3000'
-  property :title
-  property :body
+  property :title, :string
+  property :body, :string
 end
 
 # GET http://localhost:3000/posts/1.json

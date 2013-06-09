@@ -133,18 +133,20 @@ module Loco
     end
     
     module ClassMethods
-      def property(name, proc=nil)
+      def property(name, type=nil)
         name = name.to_sym
         @class_properties = get_class_properties
         
         unless @class_properties.include? name
           attr_accessor name
-          @class_properties << name
         end
         
-        unless proc.nil?
+        if type.is_a? Proc
           @class_bindings = get_class_bindings
-          @class_bindings << { name: name, proc: proc }
+          @class_bindings << { name: name, proc: type }
+        else
+          type = type.to_sym unless type.nil?
+          @class_properties << { name: name, type: type }
         end
       end
       

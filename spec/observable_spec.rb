@@ -14,11 +14,11 @@ describe "Loco::Observable" do
       Person.ancestors.member?(Loco::Observable).should.equal true
     end
     
-    it "can define a property" do
+    it "can define a property with a type" do
       should.not.raise(NoMethodError, TypeError) do
         class Person
-          property :first_name
-          property :last_name
+          property :first_name, :string
+          property :last_name, :string
         end
         @person = Person.new
         @person.first_name = 'Brian'
@@ -30,9 +30,13 @@ describe "Loco::Observable" do
     
     it "should inherit properties on subclasses" do
       class User < Person
-        property :age
+        property :age, :integer
       end
-      User.get_class_properties.should.equal [:first_name, :last_name, :age]
+      User.get_class_properties.should.equal [
+        { name: :first_name, type: :string },
+        { name: :last_name, type: :string },
+        { name: :age, type: :integer }
+      ]
     end
     
     it "defined properties should default to nil" do
@@ -85,7 +89,7 @@ describe "Loco::Observable" do
     
     it "should be able to bind properties of other objects" do
       class Person
-        property :sisters_name
+        property :sisters_name, :string
       end
       @sister = Person.new(
         first_name: 'Kirsten', 
@@ -102,7 +106,7 @@ describe "Loco::Observable" do
     it "should be able to bind properties to a chain of objects" do
       class Person
         property :brother
-        property :brothers_name
+        property :brothers_name, :string
       end
       
       @brother = Person.new(

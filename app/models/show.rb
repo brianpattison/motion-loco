@@ -1,4 +1,4 @@
 class Show < Loco::Model
   adapter 'Loco::FixtureAdapter'
-  property :title
+  property :title, :string
 end

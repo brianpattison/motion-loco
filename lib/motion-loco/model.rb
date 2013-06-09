@@ -5,7 +5,7 @@ module Loco
   
   class Model
     include Observable
-    property :id
+    property :id, :integer
     
     def destroy(&block)
       adapter = self.class.get_class_adapter
@@ -44,8 +44,9 @@ module Loco
       end
       
       if options[:root] == false
-        properties.each do |key|
-          json[key.to_sym] = self.valueForKey(key)
+        properties.each do |property|
+          key = property[:name].to_sym
+          json[key] = self.valueForKey(key)
         end
       else
         if options[:root].nil? || options[:root] == true
@@ -54,8 +55,9 @@ module Loco
           root = options[:root].to_sym
         end
         json[root] = {}
-        properties.each do |key|
-          json[root][key.to_sym] = self.valueForKey(key)
+        properties.each do |property|
+          key = property[:name]
+          json[root][key] = self.valueForKey(key)
         end
       end
       json

@@ -1,6 +1,6 @@
 class Score < Loco::Model
   adapter 'Loco::SQLiteAdapter'
-  property :rank
-  property :user_id
-  property :value
+  property :rank, :integer
+  property :user_id, :integer
+  property :value, :string
 end
