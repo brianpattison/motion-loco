@@ -76,7 +76,7 @@ end
   last_name:  'Pattison'
 )
 
-@label = Loco::Label.alloc.initWithFrame(
+@label = Loco::UI::Label.alloc.initWithFrame(
   textBinding: [@person, 'full_name'],
   height: 30,
   top: 20,
@@ -96,7 +96,7 @@ class PersonController < Loco::Controller
   property :content
 end
 
-@label = Loco::Label.alloc.initWithFrame(
+@label = Loco::UI::Label.alloc.initWithFrame(
   textBinding: 'PersonController.content.full_name',
   height: 30,
   top: 20,
@@ -113,18 +113,18 @@ PersonController.content = @person
 @label.text # "Brian Pattison"
 ```
 
-### Loco::TableView
+### Loco::UI::TableView
 
-A `Loco::TableView` is used for to easily bind a collection of objects
+A `Loco::UI::TableView` is used for to easily bind a collection of objects
 to a `UITableView` and each item in the collection to a reusable `UITableViewCell`.
 
 ```ruby
-class MyTableViewCell < Loco::TableViewCell
+class MyTableViewCell < Loco::UI::TableViewCell
   # The `view_setup` method is called the first time the cell is created.
   # Bindings can be made to the item assigned to the cell
   # by binding to `parentView.content`.
   def view_setup
-    @label = Loco::Label.alloc.initWithFrame(
+    @label = Loco::UI::Label.alloc.initWithFrame(
       textBinding: 'parentView.content.first_name',
       height: 30,
       left: 60,
@@ -135,7 +135,7 @@ class MyTableViewCell < Loco::TableViewCell
   end
 end
 
-class MyTableView < Loco::TableView
+class MyTableView < Loco::UI::TableView
   item_view_class MyTableViewCell
 end
 

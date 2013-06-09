@@ -112,7 +112,7 @@ module Loco
           @autoresizing = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
         else
           # Needs More Params
-          NSLog('%@<Loco::View> Not enough params to position and size the view.', self.class)
+          NSLog('%@<Loco::UI::View> Not enough params to position and size the view.', self.class)
         end
       elsif self.top
         if self.left && self.right && self.height
@@ -145,7 +145,7 @@ module Loco
           @autoresizing = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |UIViewAutoresizingFlexibleBottomMargin
         else
           # Needs More Params
-          NSLog('%@<Loco::View> Not enough params to position and size the view.', self.class)
+          NSLog('%@<Loco::UI::View> Not enough params to position and size the view.', self.class)
         end
       elsif self.bottom
         if self.left && self.right && self.height
@@ -178,7 +178,7 @@ module Loco
           @autoresizing = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |UIViewAutoresizingFlexibleTopMargin
         else
           # Needs More Params
-          NSLog('%@<Loco::View> Not enough params to position and size the view.', self.class)
+          NSLog('%@<Loco::UI::View> Not enough params to position and size the view.', self.class)
         end
       elsif self.left && self.right && self.height
         # FW, FTM, FBM
@@ -212,17 +212,17 @@ module Loco
         end
       else
         # Needs More Params
-        NSLog('%@<Loco::View> Not enough params to position and size the view.', self.class)
+        NSLog('%@<Loco::UI::View> Not enough params to position and size the view.', self.class)
       end
       
       # Warn of any possible conflicts
       if self.top && self.bottom && self.height
-        NSLog('%@<Loco::View> `top`, `bottom`, and `height` may conflict with each other. Only two of the three should be set.', self.class)
-        NSLog('%@<Loco::View> top: %@, bottom: %@, height: %@', self.class, self.top, self.bottom, self.height)
+        NSLog('%@<Loco::UI::View> `top`, `bottom`, and `height` may conflict with each other. Only two of the three should be set.', self.class)
+        NSLog('%@<Loco::UI::View> top: %@, bottom: %@, height: %@', self.class, self.top, self.bottom, self.height)
       end
       if self.left && self.right && self.width
-        NSLog('%@<Loco::View> `left`, `right`, and `width` may conflict with each other. Only two of the three should be set.', self.class)
-        NSLog('%@<Loco::View> left: %@, right: %@, width: %@', self.class, self.left, self.right, self.width)
+        NSLog('%@<Loco::UI::View> `left`, `right`, and `width` may conflict with each other. Only two of the three should be set.', self.class)
+        NSLog('%@<Loco::UI::View> left: %@, right: %@, width: %@', self.class, self.left, self.right, self.width)
       end
       
       if @origin_x && @origin_y && @size_width && @size_height && @autoresizing
