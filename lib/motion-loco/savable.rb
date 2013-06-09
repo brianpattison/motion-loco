@@ -9,36 +9,14 @@ module Loco
       adapter = self.class.get_class_adapter
       unless self.id.nil?
         adapter.delete_record(self) do |record|
-          self.did_delete
           block.call(record) if block.is_a? Proc
         end
       end
     end
     
-    def did_create
-      # Override to perform actions after creating the record
-    end
-    alias_method :didCreate, :did_create
-    
-    def did_delete
-      # Override to perform actions after deleting the record
-    end
-    alias_method :didCreate, :did_create
-    
-    def did_load
-      # Override to perform actions after loading data
-    end
-    alias_method :didLoad, :did_load
-    
-    def did_update
-      # Override to perform actions after updating the record
-    end
-    alias_method :didUpdate, :did_update
-    
     def load(id, data)
       data.merge!({ id: id })
       self.set_properties(data)
-      self.did_load
       self
     end
     
@@ -46,12 +24,10 @@ module Loco
       adapter = self.class.get_class_adapter
       if self.id.nil?
         adapter.create_record(self) do |record|
-          self.did_create
           block.call(record) if block.is_a? Proc
         end
       else
         adapter.update_record(self) do |record|
-          self.did_update
           block.call(record) if block.is_a? Proc
         end
       end
