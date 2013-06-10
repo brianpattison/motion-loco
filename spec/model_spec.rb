@@ -53,4 +53,46 @@ describe "Loco::Model" do
     @hash[:episode][:title].should.equal '1000'
   end
   
+  it "should allow for defining a belongs_to relationship" do
+    should.not.raise(NoMethodError, TypeError) do
+      class Guest < Loco::Model
+        adapter 'Loco::FixtureAdapter'
+        belongs_to :episode
+        property :first_name
+        property :last_name
+      end
+    end
+  end
+  
+  it "should accept a record for the belongs_to property" do
+    @episode = Episode.find(1)
+    @guest = Guest.new
+    should.not.raise(NoMethodError, TypeError) do
+      @guest = Guest.new
+      @guest.episode = @episode
+    end
+  end
+  
+  it "should raise a type error if the wrong model type is passed on the belongs_to property" do
+    should.raise(TypeError) do
+      @guest = Guest.new
+      @guest.episode = "Hello"
+    end
+  end
+  
+  it "should serialize the belongs_to id" do
+    @episode = Episode.find(1)
+    @guest = Guest.new(episode: @episode)
+    @guest.episode_id.should.equal 1
+    @guest.serialize(root: false)[:episode_id].should.equal 1
+  end
+  
+  it "should allow for defining a has_many relationship" do
+    should.not.raise(NoMethodError, TypeError) do
+      class Episode
+        has_many :guests
+      end
+    end
+  end
+  
 end

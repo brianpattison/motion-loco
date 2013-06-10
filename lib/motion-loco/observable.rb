@@ -63,7 +63,7 @@ module Loco
         if args.first.is_a?(String)
           if args.first =~ /^[A-Z]/
             split_args = args.first.split('.')
-            target = Kernel.const_get(split_args.slice!(0)).instance
+            target = split_args.slice!(0).constantize.instance
             key_path = split_args.join('.')
           else
             target = self

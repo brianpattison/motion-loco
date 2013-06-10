@@ -9,7 +9,7 @@ module Loco
       type = record.class
       record.id = generate_id(type)
       data = NSEntityDescription.insertNewObjectForEntityForName(type.to_s, inManagedObjectContext:context(type))
-      record.serialize(root: false).each do |key, value|
+      record.serialize(root: false, include_id: true).each do |key, value|
         data.setValue(value, forKey:key)
       end
       save_data_for_type(type)
@@ -27,7 +27,7 @@ module Loco
         block.call(record) if block.is_a? Proc
         record
       else
-        raise Loco::FixtureAdapter::RecordNotFound, "#{type} with the id `#{id}' could not be deleted."
+        raise Loco::FixtureAdapter::RecordNotFound, "#{type} with the id `#{record.id}' could not be deleted."
       end
     end
     
@@ -76,7 +76,7 @@ module Loco
         block.call(record) if block.is_a? Proc
         record
       else
-        raise Loco::FixtureAdapter::RecordNotFound, "#{type} with the id `#{id}' could not be updated."
+        raise Loco::FixtureAdapter::RecordNotFound, "#{type} with the id `#{record.id}' could not be updated."
       end
     end
     

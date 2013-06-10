@@ -41,12 +41,16 @@ module Loco
     
     def serialize(options={})
       json = {}
-      properties = self.class.get_class_properties.select{|prop| prop[:type] }
+      properties = self.class.get_class_properties.select{|prop| 
+        if prop[:type]
+          if prop[:name] == :id
+            options[:include_id] || options[:includeId]
+          else
+            true
+          end
+        end
+      }
       transforms = self.class.get_class_adapter.class.get_transforms
-      
-      unless options[:include_id] || options[:includeId]
-        properties.delete(:id)
-      end
       
       properties.each do |property|
         key = property[:name].to_sym
@@ -75,10 +79,38 @@ module Loco
       
       def adapter(adapter_class, *args)
         if adapter_class.is_a? String
-          @adapter = adapter_class.split('::').inject(Object) {|mod, class_name| mod.const_get(class_name) }.new(*args)
+          @adapter = adapter_class.constantize.new(*args)
         else
           @adapter = adapter_class.new(*args)
         end
+      end
+      
+      def belongs_to(name)
+        attr_accessor name
+        belongs_to_class = name.to_s.classify.constantize
+        
+        define_method "#{name}" do |&block|
+          record = instance_variable_get("@#{name}")
+          if record
+            record
+          elsif belongs_to_id = self.send("#{name}_id")
+            belongs_to_class.find(belongs_to_id) do |record|
+              block.call(record) if block.is_a? Proc
+            end
+          end
+        end
+        
+        define_method "#{name}=" do |record|
+          raise TypeError, "Expecting a #{belongs_to_class} as defined by #belongs_to :#{name}" unless record.is_a? belongs_to_class
+          self.send("#{name}_id=", (record.nil? ? nil : record.id))
+          instance_variable_set("@#{name}", record)
+        end
+        
+        property "#{name}_id", :integer
+      end
+      
+      def has_many(name)
+        # has_many_class = name.to_s.singularize.classify.constantize
       end
       
       def find(id=nil, &block)
