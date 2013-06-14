@@ -1,7 +1,8 @@
 [
   {
     "id": 1,
-    "title": "Brian's Podcast"
+    "title": "Brian's Podcast",
+    "episode_ids": [1, 2]
   },
   {
     "id": 2,

@@ -113,6 +113,15 @@ module Loco
     }
   })
   
+  Adapter.register_transform(:array, {
+    serialize: lambda{|value|
+      value.to_a
+    },
+    deserialize: lambda{|value|
+      value.to_a
+    }
+  })
+  
   Adapter.register_transform(:integer, {
     serialize: lambda{|value|
       value.to_i
