@@ -88,6 +88,4 @@ describe "Loco::Adapter" do
     
   end
   
-  
-  
 end

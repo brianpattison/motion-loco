@@ -47,9 +47,8 @@ describe "Loco::Model" do
   end
   
   it "should use data transforms on serialization" do
-    @show = Episode.new(show_id: '1', title: 1000)
+    @show = Episode.new(title: 1000)
     @hash = @show.serialize
-    @hash[:episode][:show_id].should.equal 1
     @hash[:episode][:title].should.equal '1000'
   end
   
@@ -83,13 +82,6 @@ describe "Loco::Model" do
       @guest = Guest.new
       @guest.episode = "Hello"
     end
-  end
-  
-  it "should serialize the belongs_to id" do
-    @episode = Episode.find(1)
-    @guest = Guest.new(episode: @episode)
-    @guest.episode_id.should.equal 1
-    @guest.serialize(root: false)[:episode_id].should.equal 1
   end
   
   it "should allow for defining a has_many relationship" do
@@ -126,12 +118,6 @@ describe "Loco::Model" do
     @show = Show.find(1)
     @show.episodes.length.should.equal 2
     @show.episodes.first.title.should.equal "Watch my show!"
-  end
-  
-  it "should serialize the has_many ids" do
-    @show = Show.new
-    @show.episodes = Episode.find([3, 4, 5])
-    @show.serialize(root: false)[:episode_ids].should.equal [3, 4, 5]
   end
   
 end

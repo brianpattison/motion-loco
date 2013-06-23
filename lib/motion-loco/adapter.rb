@@ -32,13 +32,45 @@ module Loco
       raise NoMethodError, "Loco::Adapter subclasses must implement #update_record(record, &block)."
     end
     
-    class << self
-  
-      def register_transform(name, transforms={})
-        @transforms = get_transforms
-        @transforms[name.to_sym] = transforms
+    def serialize(record, options={})
+      json = {}
+      
+      properties = record.class.get_class_properties.select{|prop| 
+        if prop[:type]
+          if prop[:name] == :id
+            options[:include_id] || options[:includeId]
+          else
+            true
+          end
+        end
+      }
+      
+      transforms = self.class.get_transforms
+      
+      properties.each do |property|
+        key = property[:name].to_sym
+        transform = transforms[property[:type]]
+        if transform
+          json[key] = transform[:serialize].call(record.valueForKey(key))
+        else
+          json[key] = record.valueForKey(key)
+        end
       end
-      alias_method :registerTransform, :register_transform
+      
+      if options[:root] != false
+        if options[:root].nil? || options[:root] == true
+          root = record.class.to_s.underscore.to_sym
+        else
+          root = options[:root].to_sym
+        end
+        temp = {}
+        temp[root] = json
+        json = temp
+      end
+      json
+    end
+    
+    class << self
       
       def get_transforms
         if @transforms.nil?
@@ -49,6 +81,12 @@ module Loco
         end
         @transforms
       end
+      
+      def register_transform(name, transforms={})
+        @transforms = get_transforms
+        @transforms[name.to_sym] = transforms
+      end
+      alias_method :registerTransform, :register_transform
       
     end
     
@@ -71,6 +109,7 @@ module Loco
     def transform_data_item(type, data)
       json = {}
       transforms = self.class.get_transforms
+      
       type.get_class_properties.each do |property|
         key = property[:name].to_sym
         transform = transforms[property[:type]]
@@ -80,6 +119,16 @@ module Loco
           json[key] = data.valueForKey(key)
         end
       end
+      
+      type.get_class_relationships.each do |relationship|
+        if relationship[:belongs_to]
+          key = "#{relationship[:belongs_to]}_id".to_sym
+        elsif relationship[:has_many]
+          key = "#{relationship[:has_many].to_s.singularize}_ids".to_sym
+        end
+        json[key] = data.valueForKey(key)
+      end
+      
       json
     end
     

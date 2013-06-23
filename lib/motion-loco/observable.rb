@@ -192,6 +192,16 @@ module Loco
         @class_properties
       end
       
+      def get_class_relationships
+        if @class_relationships.nil?
+          @class_relationships = []
+          if self.superclass.respond_to? :get_class_relationships
+            @class_relationships.concat(self.superclass.get_class_relationships)
+          end
+        end
+        @class_relationships
+      end
+      
     end
     
     def self.included(base)
