@@ -214,11 +214,12 @@ end
 ## TODO
 
 - State Manager
-- Relationships
-- Property types/transforms
+- ~~Relationships~~ 0.2.0
+- ~~Property types/transforms~~ 0.2.0
 - Validations?
 - More Adapters
-    - Core Data (Are SQLite and iCloud also part of this adapter??)
+    - ~~SQLite~~ 0.2.0
+    - iCloud
 - Lots of stuff
 
 ## Contributing
