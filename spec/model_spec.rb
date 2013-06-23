@@ -101,16 +101,18 @@ describe "Loco::Model" do
   
   it "should accept an array with the proper record type for the has_many property" do
     @episode = Episode.new
+    @guests = [Guest.new(first_name: 'Joe', last_name: 'Blow')]
     should.not.raise(NoMethodError, TypeError) do
-      @episode.guests = [Guest.new(first_name: 'Joe', last_name: 'Blow')]
+      @episode.guests = @guests
     end
     @episode.guests.first.first_name.should.equal 'Joe'
   end
   
   it "should raise a type error if the wrong model type is passed on the has_many property" do
     @episode = Episode.new
+    @guests = [Show.new]
     should.raise(TypeError) do
-      @episode.guests = [Show.new]
+      @episode.guests = @guests
     end
   end
   

@@ -211,16 +211,40 @@ end
 end
 ```
 
+### Loco::SQLiteAdapter
+```ruby
+class Player < Loco::Model
+  adapter 'Loco::SQLiteAdapter'
+  property :name, :string
+  has_many :scores
+end
+
+class Score < Loco::Model
+  adapter 'Loco::SQLiteAdapter'
+  property :rank, :integer
+  property :value, :integer
+  belongs_to :player
+end
+
+@player = Player.new(name: 'Kirsten Pattison')
+@player.save
+
+@score = Score.new(rank: 1, value: 50000, player: @player)
+@score.save
+
+@player.scores.length # 1
+@score.player.name    # Kirsten Pattison
+```
+
 ## TODO
 
+- RESTAdapter
+    - Sideload belongs_to/has_many
 - State Manager
-- ~~Relationships~~ 0.2.0
-- ~~Property types/transforms~~ 0.2.0
-- Validations?
-- More Adapters
-    - ~~SQLite~~ 0.2.0
-    - iCloud
-- Lots of stuff
+    - Pretty big challenge, so it might be a while
+    - Limit transitions between states
+    - Rollback dirty/unsaved records
+- Improve everything! :)
 
 ## Contributing
 

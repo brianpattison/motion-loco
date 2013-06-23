@@ -64,14 +64,17 @@ module Loco
           if record
             block.call(record) if block.is_a? Proc
             record
-          elsif belongs_to_id = self.send("#{model}_id")
-            belongs_to_class_name.constantize.find(belongs_to_id) do |record|
-              instance_variable_set("@#{model}", record)
-              block.call(record) if block.is_a? Proc
-            end
           else
-            block.call(record) if block.is_a? Proc
-            record
+            belongs_to_id = self.send("#{model}_id")
+            if belongs_to_id
+              belongs_to_class_name.constantize.find(belongs_to_id) do |record|
+                instance_variable_set("@#{model}", record)
+                block.call(record) if block.is_a? Proc
+              end
+            else
+              block.call(record) if block.is_a? Proc
+              record
+            end
           end
         end
         
@@ -98,14 +101,19 @@ module Loco
           if records
             block.call(records) if block.is_a? Proc
             records
-          elsif has_many_ids = self.send("#{model.to_s.singularize}_ids")
-            has_many_class.find(has_many_ids) do |records|
-              block.call(records) if block.is_a? Proc
-            end
           else
-            records = RecordArray.new
-            block.call(records) if block.is_a? Proc
-            records
+            has_many_ids = self.send("#{model.to_s.singularize}_ids")
+            if has_many_ids
+              has_many_class.find(has_many_ids) do |records|
+                block.call(records) if block.is_a? Proc
+              end
+            else
+              query = {}
+              query["#{self.class.to_s.underscore.singularize}_id"] = self.id
+              has_many_class.find(query) do |records|
+                block.call(records) if block.is_a? Proc
+              end
+            end
           end
         end
         
