@@ -2,20 +2,19 @@
 
 Motion-Loco is a library for [RubyMotion](http://rubymotion.com) 
 that includes [Ember.js](http://emberjs.com) inspired bindings, 
-computed properties, and observers.
-
-Also included is a set of views that are easier to position and size.
-
-**I'm not using this in production yet. It might be ready, 
-but I feel like it needs some more features to really be useful.**
+computed properties, and observers. **And Ember-Data inspired [data](#locofixtureadapter) [adapters](#locorestadapter)!**
 
 ## What's New!
 
-### June 7th, 2013
+### June 23th, 2013
 
-#### Data Adapters
+#### SQLiteAdapter and Relationships!
 
-These are still a bit of a work in progress, but [worth](#locofixtureadapter) [checking out](#locorestadapter)!
+I need to write up some better documentation, but be sure to check out the [Loco::SQLiteAdapter](locosqliteadapter) and the new `has_many` and `belongs_to` relationships in `Loco::Model`.
+
+The relationship stuff needs some major code clean up, so don't copy my code if you're doing anything similar for loading/saving relationship data. :)
+
+The [tests](https://github.com/brianpattison/motion-loco/tree/master/spec) all pass though... so that's something, right?
 
 ## Installation
 
@@ -240,6 +239,8 @@ end
 
 - RESTAdapter
     - Sideload belongs_to/has_many
+- SQLiteAdapter
+    - Data migrations?
 - State Manager
     - Pretty big challenge, so it might be a while
     - Limit transitions between states
