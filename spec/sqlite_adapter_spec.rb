@@ -18,7 +18,7 @@ describe "Loco::SQLiteAdapter" do
     @score.player_id.should.equal 5
     @score.value.should.equal '2000'
     
-    @score = Score.new(rank: 2, player_id: '20', value: 1000)
+    @score = Score.new(rank: 2, player_id: 20, value: 1000)
     @score.id.nil?.should.equal true
     @score.save
     @score.id.should.equal 2

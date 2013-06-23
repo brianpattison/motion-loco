@@ -32,9 +32,7 @@ module Loco
       raise NoMethodError, "Loco::Adapter subclasses must implement #update_record(record, &block)."
     end
     
-    def serialize(record, options={})
-      json = {}
-      
+    def serialize(record, options={}, json={})
       properties = record.class.get_class_properties.select{|prop| 
         if prop[:type]
           if prop[:name] == :id

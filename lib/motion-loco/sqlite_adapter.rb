@@ -80,6 +80,15 @@ module Loco
       end
     end
     
+    def serialize(record, options={})
+      json = {}
+      record.class.get_class_relationships.select{|relationship| relationship[:belongs_to] }.each do |relationship|
+        key = "#{relationship[:belongs_to]}_id".to_sym
+        json[key] = record.valueForKey(key)
+      end
+      super(record, options, json)
+    end
+    
   private
   
     def request(type, query=nil)
@@ -125,7 +134,8 @@ module Loco
       @entity ||= begin
         entity = NSEntityDescription.new
         entity.name = type.to_s
-        entity.properties = type.get_class_properties.select{|prop|
+        
+        properties = type.get_class_properties.select{|prop|
           prop[:type]
         }.map{|prop|
           property = NSAttributeDescription.new
@@ -142,6 +152,16 @@ module Loco
           end
           property
         }
+        
+        type.get_class_relationships.select{|relationship| relationship[:belongs_to] }.each do |relationship|
+          property = NSAttributeDescription.new
+          property.name = "#{relationship[:belongs_to]}_id"
+          property.attributeType = NSInteger32AttributeType
+          properties << property
+        end
+        
+        entity.properties = properties
+        
         entity
       end
     end
@@ -170,18 +190,32 @@ module Loco
       if data.is_a? Array
         super(type, data.map{|object|
           data_item = {}
+          
           type.get_class_properties.each do |property|
             key = property[:name].to_sym
             data_item[key] = object.valueForKey(key)
           end
+          
+          type.get_class_relationships.select{|relationship| relationship[:belongs_to] }.each do |relationship|
+            key = "#{relationship[:belongs_to]}_id".to_sym
+            data_item[key] = object.valueForKey(key)
+          end
+          
           data_item
         })
       else
         json = {}
+        
         type.get_class_properties.each do |property|
           key = property[:name].to_sym
           json[key] = data.valueForKey(key)
         end
+        
+        type.get_class_relationships.select{|relationship| relationship[:belongs_to] }.each do |relationship|
+          key = "#{relationship[:belongs_to]}_id".to_sym
+          json[key] = data.valueForKey(key)
+        end
+        
         super(type, json)
       end
     end

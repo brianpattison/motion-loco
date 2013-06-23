@@ -114,6 +114,20 @@ module Loco
       record
     end
     
+    def serialize(record, options={})
+      json = {}
+      record.class.get_class_relationships.each do |relationship|
+        if relationship[:belongs_to]
+          key = "#{relationship[:belongs_to]}_id".to_sym
+        elsif relationship[:has_many]
+          key = "#{relationship[:has_many].to_s.singularize}_ids".to_sym
+        end
+        value = record.valueForKey(key)
+        json[key] = value if value
+      end
+      super(record, options, json)
+    end
+    
     def url
       unless @url.nil?
         @url

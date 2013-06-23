@@ -84,16 +84,16 @@ describe "Loco::RESTAdapter" do
   end
   
   it "should serialize the belongs_to id" do
-    @episode = Episode.find(1)
-    @guest = Guest.new(episode: @episode)
-    @guest.episode_id.should.equal 1
-    @guest.serialize(root: false)[:episode_id].should.equal 1
+    @post = Post.find(1)
+    @comment = Comment.new(post: @post)
+    @comment.post_id.should.equal 1
+    @comment.serialize(root: false)[:post_id].should.equal 1
   end
   
   it "should serialize the has_many ids" do
-    @show = Show.new
-    @show.episodes = Episode.find([3, 4, 5])
-    @show.serialize(root: false)[:episode_ids].should.equal [3, 4, 5]
+    @post = Post.new
+    @post.comments = Comment.find([3, 4, 5])
+    @post.serialize(root: false)[:comment_ids].should.equal [3, 4, 5]
   end
   
 end

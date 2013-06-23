@@ -93,12 +93,13 @@ module Loco
         has_many_class_name = model.to_s.singularize.classify
         
         define_method "#{model}" do |&block|
+          has_many_class = has_many_class_name.constantize
           records = instance_variable_get("@#{model}")
           if records
             block.call(records) if block.is_a? Proc
             records
           elsif has_many_ids = self.send("#{model.to_s.singularize}_ids")
-            has_many_class_name.constantize.find(has_many_ids) do |records|
+            has_many_class.find(has_many_ids) do |records|
               block.call(records) if block.is_a? Proc
             end
           else
@@ -109,7 +110,8 @@ module Loco
         end
         
         define_method "#{model}=" do |records|
-          if (records.is_a?(RecordArray) || records.is_a?(Array)) && (records.length == 0 || (records.length > 0 && records.first.class == has_many_class_name.constantize))
+          has_many_class = has_many_class_name.constantize
+          if (records.is_a?(RecordArray) || records.is_a?(Array)) && (records.length == 0 || (records.length > 0 && records.first.class == has_many_class))
             unless records.is_a?(RecordArray)
               record_array = RecordArray.new
               record_array.addObjectsFromArray(records)
@@ -138,6 +140,9 @@ module Loco
         elsif id.is_a? Array
           # Return records with given ids
           records = RecordArray.new
+          id.each do |i|
+            records << self.new(id: i)
+          end
           adapter.find_many(self, records, id) do |records|
             block.call(records) if block.is_a? Proc
           end
