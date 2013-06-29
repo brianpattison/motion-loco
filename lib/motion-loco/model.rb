@@ -57,9 +57,8 @@ module Loco
         attr_accessor model
         attr_accessor "#{model}_id"
         
-        belongs_to_class_name = model.to_s.classify
-        
         define_method "#{model}" do |&block|
+          belongs_to_class = model.to_s.classify.constantize
           record = instance_variable_get("@#{model}")
           if record
             block.call(record) if block.is_a? Proc
@@ -67,7 +66,7 @@ module Loco
           else
             belongs_to_id = self.send("#{model}_id")
             if belongs_to_id
-              belongs_to_class_name.constantize.find(belongs_to_id) do |record|
+              belongs_to_class.find(belongs_to_id) do |record|
                 instance_variable_set("@#{model}", record)
                 block.call(record) if block.is_a? Proc
               end
@@ -79,9 +78,10 @@ module Loco
         end
         
         define_method "#{model}=" do |record|
-          raise TypeError, "Expecting a #{belongs_to_class_name} as defined by #belongs_to :#{model}" unless record.is_a? belongs_to_class_name.constantize
-          self.send("#{model}_id=", (record.nil? ? nil : record.id))
+          belongs_to_class = model.to_s.classify.constantize
+          raise TypeError, "Expecting a #{belongs_to_class} as defined by #belongs_to :#{model}" unless record.is_a? belongs_to_class
           instance_variable_set("@#{model}", record)
+          self.send("#{model}_id=", (record.nil? ? nil : record.id))
           record
         end
         
@@ -93,10 +93,9 @@ module Loco
         attr_accessor model
         attr_accessor "#{model.to_s.singularize}_ids"
         
-        has_many_class_name = model.to_s.singularize.classify
-        
         define_method "#{model}" do |&block|
-          has_many_class = has_many_class_name.constantize
+          has_many_class = model.to_s.singularize.classify.constantize
+          
           records = instance_variable_get("@#{model}")
           if records
             block.call(records) if block.is_a? Proc
@@ -118,7 +117,8 @@ module Loco
         end
         
         define_method "#{model}=" do |records|
-          has_many_class = has_many_class_name.constantize
+          has_many_class = model.to_s.singularize.classify.constantize
+          
           if (records.is_a?(RecordArray) || records.is_a?(Array)) && (records.length == 0 || (records.length > 0 && records.first.class == has_many_class))
             unless records.is_a?(RecordArray)
               record_array = RecordArray.new
@@ -126,11 +126,22 @@ module Loco
               records = record_array
             end
           else
-            raise TypeError, "Expecting a Loco::RecordArray of #{has_many_class_name} objects as defined by #has_many :#{model}"
+            raise TypeError, "Expecting a Loco::RecordArray of #{has_many_class} objects as defined by #has_many :#{model}"
           end
           
-          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
           instance_variable_set("@#{model}", records)
+          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
+          records
+        end
+        
+        define_method "#{model}<<" do |record|
+          has_many_class = model.to_s.singularize.classify.constantize
+          raise TypeError, "Expecting a #{has_many_class} as defined by #has_many :#{model}" unless record.is_a? has_many_class
+          records = instance_variable_get("@#{model}")
+          records << record
+          Loco.debug(records.map(&:id))
+          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
+          records
         end
         
         relationships = get_class_relationships

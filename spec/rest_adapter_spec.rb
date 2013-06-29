@@ -1,3 +1,5 @@
+motion_require 'adapter_test_helper'
+
 describe "Loco::RESTAdapter" do
   
   it "should be defined" do
@@ -16,84 +18,20 @@ describe "Loco::RESTAdapter" do
     end
   end
   
-  it "should accept a block on #find and the loaded record should be returned" do
-    @post = Post.find(1) do |post|
-      resume
-    end
-    
-    wait do
-      @post.title.should.equal "My first blog post"
-    end
+  it "should pass all adapter tests" do
+    AdapterTestHelper.run('Loco::RESTAdapter', nil, 'http://localhost:3000').should.equal true
   end
   
-  it "should change the URL route based on the model's class name" do
-    @comment = Comment.find(1) do |comment|
-      resume
-    end
-    
-    wait do
-      @comment.body.should.equal "I love Ruby and iOS!"
-    end
-  end
-  
-  it "should return an array of all records for a model using #all" do
-    @posts = Post.all do |posts|
-      resume
-    end
-    
-    wait do
-      @posts.length.should.equal 2
-    end
-  end
-  
-  it "should return an array of records from multiple ids" do
-    @comments = Comment.find([2, 3, 5]) do |comments|
-      resume
-    end
-    
-    wait do
-      @comments.length.should.equal 3
-      @comments.first.body.should.equal "Just use Objective-C!"
-      @comments.last.body.should.equal "What's a Rails app doing in a RubyMotion gem repo??"
-    end
-  end
-  
-  it "should return an array of all records matching parameters given as a Hash" do
-    @comments = Comment.where(post_id: 2) do |comments|
-      resume
-    end
-    
-    wait do
-      @comments.length.should.equal 3
-      @comments.first.body.should.equal "Yay! A REST data adapter!"
-      @comments.last.body.should.equal "I do what I want!"
-    end
-  end
-  
-  it "should save a new record and assign the ID back to the record" do
-    @post = Post.new(title: "Loco::RESTAdapter can save!", body: "Hopefully.")
-    @post.save do |post|
-      resume
-    end
-    
-    @post.id.nil?.should.equal true
-    
-    wait do
-      @post.id.nil?.should.equal false
-    end
-  end
-  
-  it "should serialize the belongs_to id" do
-    @post = Post.find(1)
-    @comment = Comment.new(post: @post)
-    @comment.post_id.should.equal 1
-    @comment.serialize(root: false)[:post_id].should.equal 1
-  end
-  
-  it "should serialize the has_many ids" do
-    @post = Post.new
-    @post.comments = Comment.find([3, 4, 5])
-    @post.serialize(root: false)[:comment_ids].should.equal [3, 4, 5]
-  end
-  
+  # it "should serialize the belongs_to id" do
+  #   @post = Post.find(1)
+  #   @comment = Comment.new(post: @post)
+  #   @comment.post_id.should.equal 1
+  #   @comment.serialize(root: false)[:post_id].should.equal 1
+  # end
+  # 
+  # it "should serialize the has_many ids" do
+  #   @post = Post.new
+  #   @post.comments = Comment.find([3, 4, 5])
+  #   @post.serialize(root: false)[:comment_ids].should.equal [3, 4, 5]
+  # end
 end
