@@ -85,6 +85,16 @@ module Loco
           record
         end
         
+        define_method "#{model}_id" do
+          belongs_to_id = super
+          if belongs_to_id
+            belongs_to_id
+          else
+            belongs_to = self.send("#{model}")
+            belongs_to.id unless belongs_to.nil?
+          end
+        end
+        
         relationships = get_class_relationships
         relationships << { belongs_to: model }
       end
@@ -134,14 +144,14 @@ module Loco
           records
         end
         
-        define_method "#{model}<<" do |record|
-          has_many_class = model.to_s.singularize.classify.constantize
-          raise TypeError, "Expecting a #{has_many_class} as defined by #has_many :#{model}" unless record.is_a? has_many_class
-          records = instance_variable_get("@#{model}")
-          records << record
-          Loco.debug(records.map(&:id))
-          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
-          records
+        define_method "#{model.to_s.singularize}_ids" do
+          has_many_ids = super
+          if has_many_ids
+            has_many_ids
+          else
+            has_many = self.send("#{model}")
+            has_many.map(&:id) unless has_many.nil?
+          end
         end
         
         relationships = get_class_relationships
