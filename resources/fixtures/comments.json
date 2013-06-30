@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "body": "Testing, testing, testing.",
+    "post_id": 1
+  },
+  {
+    "id": 2,
+    "body": "Testing again.",
+    "post_id": 2
+  },
+  {
+    "id": 3,
+    "body": "Testing has_many relationships",
+    "post_id": 1
+  }
+]
