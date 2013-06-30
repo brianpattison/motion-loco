@@ -7,21 +7,30 @@ class AdapterTestHelper
     # every time we create data used for the next tests.
     
     describe "Loco::Adapter Tests - #{adapter}" do
+      if options[:async]
+        @wait_for = nil
+      else
+        @wait_for = 0.1
+      end
       
-      Comment.adapter(adapter, *args)
-      Post.adapter(adapter, *args)
+      it "should assign the adapter to the model with optional arguments" do
+        should.not.raise(NoMethodError, TypeError) do
+          Comment.adapter(adapter, *args)
+          Post.adapter(adapter, *args)
+        end
+      end
       
       ##### Record Saving
       
       it "should save a new record and assign the ID back to the record" do
         @post = Post.new(title: "Loco::Adapter Tests", body: "Use the AdapterTestHelper to test your data adapter.")
         @post.id.nil?.should.equal true
-      
+        
         @post.save do |post|
-          resume
+          resume if @wait_for.nil?
         end
   
-        wait do
+        wait @wait_for do
           @saved_post_id = @post.id
           @saved_post_id.nil?.should.equal false
         end
@@ -32,10 +41,10 @@ class AdapterTestHelper
         @post_confirm.id.nil?.should.equal true
       
         @post_confirm.save do |post|
-          resume
+          resume if @wait_for.nil?
         end
   
-        wait do
+        wait @wait_for do
           @saved_post_id_confirm = @post_confirm.id
           @saved_post_id_confirm.nil?.should.equal false
         end
@@ -45,49 +54,49 @@ class AdapterTestHelper
     
       it "should accept a block on #find and the loaded record should be returned" do
         @post = Post.find(@saved_post_id) do |post|
-          resume
+          resume if @wait_for.nil?
         end
   
-        wait do
+        wait @wait_for do
           @post.title.should.equal "Loco::Adapter Tests"
         end
       end
     
       it "should load the additional record as well" do
         @post_confirm = Post.find(@saved_post_id_confirm) do |post|
-          resume
+          resume if @wait_for.nil?
         end
 
-        wait do
+        wait @wait_for do
           @post_confirm.title.should.equal "Another Post for Testing"
         end
       end
     
       it "should return an array of all records for a model using #all" do
         @posts = Post.all do |posts|
-          resume
+          resume if @wait_for.nil?
         end
         
-        wait do
+        wait @wait_for do
           @posts.length.should.equal 2
         end
       end
       
       it "should return an array of records from multiple ids" do
         @posts = Post.find([@saved_post_id, @saved_post_id_confirm]) do |posts|
-          resume
+          resume if @wait_for.nil?
         end
         
-        wait do
+        wait @wait_for do
           @posts.length.should.equal 2
           @posts.first.title.should.equal "Loco::Adapter Tests"
           @posts.last.title.should.equal "Another Post for Testing"
         
           @posts = Post.find([@saved_post_id_confirm]) do |posts|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do
+          wait @wait_for do
             @posts.length.should.equal 1
             @posts.first.title.should.equal "Another Post for Testing"
           end
@@ -98,16 +107,16 @@ class AdapterTestHelper
     
       it "should save a belongs_to relationship" do
         @post = Post.find(@saved_post_id) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment = Comment.new(body: "Testing, testing, testing.", post: @post)
           @comment.save do |comment|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do
+          wait @wait_for do
             @saved_comment_id = @comment.id
             @comment.post_id.should.equal @saved_post_id
           end
@@ -116,16 +125,16 @@ class AdapterTestHelper
     
       it "should save a belongs_to relationship again" do
         @post_confirm = Post.find(@saved_post_id_confirm) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment_confirm = Comment.new(body: "Testing again.", post: @post_confirm)
           @comment_confirm.save do |comment|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do
+          wait @wait_for do
             @saved_comment_id_confirm = @comment_confirm.id
             @comment_confirm.post_id.should.equal @saved_post_id_confirm
           end
@@ -134,35 +143,35 @@ class AdapterTestHelper
     
       it "should load a belongs_to id" do
         @comment = Comment.find(@saved_comment_id) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment.post_id.should.equal @saved_post_id
         end
       end
     
       it "should load a belongs_to id again" do
         @comment_confirm = Comment.find(@saved_comment_id_confirm) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment_confirm.post_id.should.equal @saved_post_id_confirm
         end
       end
     
       it "should load a belongs_to relationship when given a block" do
         @comment = Comment.find(@saved_comment_id) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment.post do |post|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do
+          wait @wait_for do
             @comment.post.title.should.equal "Loco::Adapter Tests"
           end
         end
@@ -172,24 +181,24 @@ class AdapterTestHelper
     
       it "should save a has_many relationship" do
         @post = Post.find(@saved_post_id) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment = Comment.new(body: "Testing has_many relationships")
           
           @comment.save do |comment|
-            resume
+            resume if @wait_for.nil?
           end
           
-          wait do
+          wait @wait_for do
             @saved_comment_id_has_many = @comment.id
             @post.comments << @comment
             @post.save do |post|
-              resume
+              resume if @wait_for.nil?
             end
             
-            wait do
+            wait @wait_for do
               @post.comment_ids.length.should.equal 2
             end
           end
@@ -198,10 +207,10 @@ class AdapterTestHelper
     
       it "should load has_many ids" do
         @post = Post.find(@saved_post_id) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @post.comment_ids.length.should.equal 2
           @post.comment_ids.include?(@saved_comment_id_has_many).should.equal true
         end
@@ -209,15 +218,15 @@ class AdapterTestHelper
          
       it "should load a has_many relationship when given a block" do
         @post = Post.find(@saved_post_id) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @post.comments do |comments|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do
+          wait @wait_for do
             @post.comments.first.title.should.equal "Testing, testing, testing."
           end
         end
@@ -227,10 +236,10 @@ class AdapterTestHelper
   
       it "should return an array of all records matching parameters given as a Hash" do
         @comments = Comment.where(post_id: @saved_post_id) do |comments|
-          resume
+          resume if @wait_for.nil?
         end
         
-        wait do
+        wait @wait_for do
           @comments.length.should.equal 2
           @comments.first.body.should.equal "Testing, testing, testing."
         end
@@ -240,20 +249,20 @@ class AdapterTestHelper
 
       it "should delete the saved post" do
         @post = Post.find(@saved_post_id) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @post.destroy do |post|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do            
+          wait @wait_for do            
             @posts = Post.all do |posts|
-              resume
+              resume if @wait_for.nil?
             end
           
-            wait do
+            wait @wait_for do
               @posts.length.should.equal 1
             end
           end
@@ -262,20 +271,20 @@ class AdapterTestHelper
     
       it "should delete the other saved post" do
         @post = Post.find(@saved_post_id_confirm) do |post|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @post.destroy do |post|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do            
+          wait @wait_for do            
             @posts = Post.all do |posts|
-              resume
+              resume if @wait_for.nil?
             end
           
-            wait do
+            wait @wait_for do
               @posts.length.should.equal 0
             end
           end
@@ -284,20 +293,20 @@ class AdapterTestHelper
     
       it "should delete the saved comment" do
         @comment = Comment.find(@saved_comment_id) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment.destroy do |comment|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do            
+          wait @wait_for do            
             @comments = Comment.all do |comments|
-              resume
+              resume if @wait_for.nil?
             end
           
-            wait do
+            wait @wait_for do
               @comments.length.should.equal 2
             end
           end
@@ -306,20 +315,20 @@ class AdapterTestHelper
     
       it "should delete the other saved comment" do
         @comment = Comment.find(@saved_comment_id_confirm) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment.destroy do |comment|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do            
+          wait @wait_for do            
             @comments = Comment.all do |comments|
-              resume
+              resume if @wait_for.nil?
             end
           
-            wait do
+            wait @wait_for do
               @comments.length.should.equal 1
             end
           end
@@ -328,20 +337,20 @@ class AdapterTestHelper
       
       it "should delete the has_many test comment" do
         @comment = Comment.find(@saved_comment_id_has_many) do |comment|
-          resume
+          resume if @wait_for.nil?
         end
       
-        wait do
+        wait @wait_for do
           @comment.destroy do |comment|
-            resume
+            resume if @wait_for.nil?
           end
         
-          wait do            
+          wait @wait_for do            
             @comments = Comment.all do |comments|
-              resume
+              resume if @wait_for.nil?
             end
           
-            wait do
+            wait @wait_for do
               @comments.length.should.equal 0
             end
           end

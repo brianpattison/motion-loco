@@ -19,7 +19,7 @@ describe "Loco::RESTAdapter" do
   end
   
   it "should pass all adapter tests" do
-    AdapterTestHelper.run('Loco::RESTAdapter', nil, 'http://localhost:3000').should.equal true
+    AdapterTestHelper.run('Loco::RESTAdapter', { async: true }, 'http://localhost:3000').should.equal true
   end
   
   # it "should serialize the belongs_to id" do

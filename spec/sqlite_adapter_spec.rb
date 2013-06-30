@@ -5,7 +5,7 @@ describe "Loco::SQLiteAdapter" do
   end
   
   it "should pass all adapter tests" do
-    # AdapterTestHelper.run('Loco::SQLiteAdapter').should.equal true
+    AdapterTestHelper.run('Loco::SQLiteAdapter').should.equal true
   end
   
 end
