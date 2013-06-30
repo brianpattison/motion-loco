@@ -91,7 +91,7 @@ module Loco
   private
     
     def load(type, records, data)
-      if records.is_a? Array
+      if records.is_a? RecordArray
         if data.is_a? Hash
           data = data[type.to_s.underscore.pluralize]
         end
