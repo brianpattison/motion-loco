@@ -1,4 +1,3 @@
-excludeInBrowser = "{$excludeInBrowser,build}"
 excludeInFileChooser = "{$excludeInFileChooser,build}"
 excludeInFolderSearch = "{$excludeInFolderSearch,build}"
 

@@ -16,9 +16,25 @@ module Loco
       end
     end
     
+    def initialize(properties={})
+      super
+      initialize_relationships
+      self
+    end
+    
+    def initialize_relationships
+      self.class.get_class_relationships.select{|relationship| relationship[:has_many] }.each do |relationship|
+        has_many_class = relationship[:has_many].to_s.classify.constantize
+        self.send("#{relationship[:has_many]}=", RecordArray.new(item_class: has_many_class, belongs_to: self))
+        self.send("#{relationship[:has_many].to_s.singularize}_ids=", [])
+        Loco.debug(self.comment_ids) if self.respond_to? :comment_ids
+      end
+    end
+    
     def load(id, data)
       data.merge!({ id: id })
       self.set_properties(data)
+      Loco.debug(self.comment_ids) if self.respond_to? :comment_ids
       self
     end
     
@@ -101,18 +117,22 @@ module Loco
             block.call(records) if block.is_a? Proc
             records
           else
-            has_many_ids = self.send("#{model.to_s.singularize}_ids")
+            has_many_ids = instance_variable_get("@#{model.to_s.singularize}_ids")
             if has_many_ids
-              has_many_class.find(has_many_ids) do |records|
+              record_array = has_many_class.find(has_many_ids) do |records|
+                records.belongs_to = self
                 block.call(records) if block.is_a? Proc
               end
             else
               query = {}
               query["#{self.class.to_s.underscore.singularize}_id"] = self.id
-              has_many_class.find(query) do |records|
+              record_array = has_many_class.find(query) do |records|
+                records.belongs_to = self
                 block.call(records) if block.is_a? Proc
               end
             end
+            record_array.belongs_to = self
+            record_array
           end
         end
         
@@ -121,7 +141,7 @@ module Loco
           
           if (records.is_a?(RecordArray) || records.is_a?(Array)) && (records.length == 0 || (records.length > 0 && records.first.class == has_many_class))
             unless records.is_a?(RecordArray)
-              record_array = RecordArray.new
+              record_array = RecordArray.new(item_class: has_many_class, belongs_to: self)
               record_array.addObjectsFromArray(records)
               records = record_array
             end
@@ -130,17 +150,7 @@ module Loco
           end
           
           instance_variable_set("@#{model}", records)
-          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
-          records
-        end
-        
-        define_method "#{model}<<" do |record|
-          has_many_class = model.to_s.singularize.classify.constantize
-          raise TypeError, "Expecting a #{has_many_class} as defined by #has_many :#{model}" unless record.is_a? has_many_class
-          records = instance_variable_get("@#{model}")
-          records << record
-          Loco.debug(records.map(&:id))
-          self.send("#{model.to_s.singularize}_ids=", records.map(&:id))
+          instance_variable_set("@#{model.to_s.singularize}_ids", records.map(&:id))
           records
         end
         
@@ -152,13 +162,13 @@ module Loco
         adapter = self.get_class_adapter
         if id.nil?
           # Return all records
-          records = RecordArray.new
+          records = RecordArray.new(item_class: self.class)
           adapter.find_all(self, records) do |records|
             block.call(records) if block.is_a? Proc
           end
         elsif id.is_a? Array
           # Return records with given ids
-          records = RecordArray.new
+          records = RecordArray.new(item_class: self.class)
           id.each do |i|
             records << self.new(id: i)
           end
@@ -167,7 +177,7 @@ module Loco
           end
         elsif id.is_a? Hash
           # Return records matching query
-          records = RecordArray.new
+          records = RecordArray.new(item_class: self.class)
           adapter.find_query(self, records, id) do |records|
             block.call(records) if block.is_a? Proc
           end

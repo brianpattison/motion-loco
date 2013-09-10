@@ -264,6 +264,11 @@ class AdapterTestHelper
         @saved_comment_id_has_many = 3
         
       else
+        
+        it "should return a Loco::RecordArray for has_many relationships" do
+          @post = Post.new
+          @post.comments.is_a?(Loco::RecordArray).should.equal true
+        end
     
         it "should save a has_many relationship" do
           @post = Post.find(@saved_post_id) do |post|
@@ -315,7 +320,7 @@ class AdapterTestHelper
           end
         
           wait @wait_for do
-            @post.comments.first.title.should.equal "Testing, testing, testing."
+            @post.comments.first.body.should.equal "Testing, testing, testing."
           end
         end
       end
