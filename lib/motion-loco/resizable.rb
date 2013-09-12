@@ -9,6 +9,13 @@ module Loco
     # relative to the superview's bottom edge.
     # @return [Integer]
     attr_accessor :bottom
+    def bottom
+      if @bottom.is_a?(String) && self.parentView
+        self.parentView.bounds.size.height  * (@bottom.gsub('%', '').to_f / 100.0)
+      else
+        @bottom
+      end
+    end
     def bottom=(bottom)
       super
       refresh_layout
@@ -17,6 +24,13 @@ module Loco
     # The height of the view.
     # @return [Integer]
     attr_accessor :height
+    def height
+      if @height.is_a?(String) && self.parentView
+        self.parentView.bounds.size.height  * (@height.gsub('%', '').to_f / 100.0)
+      else
+        @height
+      end
+    end
     def height=(height)
       super
       refresh_layout
@@ -26,6 +40,13 @@ module Loco
     # relative to the superview's left edge.
     # @return [Integer]
     attr_accessor :left
+    def left
+      if @left.is_a?(String) && self.parentView
+        self.parentView.bounds.size.width  * (@left.gsub('%', '').to_f / 100.0)
+      else
+        @left
+      end
+    end
     def left=(left)
       super
       refresh_layout
@@ -35,6 +56,13 @@ module Loco
     # relative to the superview's right edge.
     # @return [Integer]
     attr_accessor :right
+    def right
+      if @right.is_a?(String) && self.parentView
+        self.parentView.bounds.size.width  * (@right.gsub('%', '').to_f / 100.0)
+      else
+        @right
+      end
+    end
     def right=(right)
       super
       refresh_layout
@@ -44,6 +72,13 @@ module Loco
     # relative to the superview's top edge.
     # @return [Integer]
     attr_accessor :top
+    def top
+      if @top.is_a?(String) && self.parentView
+        self.parentView.bounds.size.height  * (@top.gsub('%', '').to_f / 100.0)
+      else
+        @top
+      end
+    end
     def top=(top)
       super
       refresh_layout
@@ -52,6 +87,13 @@ module Loco
     # The width of the view.
     # @return [Integer]
     attr_accessor :width
+    def width
+      if @width.is_a?(String) && self.parentView
+        self.parentView.bounds.size.width  * (@width.gsub('%', '').to_f / 100.0)
+      else
+        @width
+      end
+    end
     def width=(width)
       super
       refresh_layout
@@ -235,6 +277,7 @@ module Loco
         view.refresh_layout(self) if view.is_a? Resizable
       end
     end
+    alias_method :refreshLayout, :refresh_layout
     
     def view_setup
       viewSetup
@@ -249,6 +292,7 @@ module Loco
       self.parentView = superview
       refresh_layout(superview)
     end
+    
   end
   
 end

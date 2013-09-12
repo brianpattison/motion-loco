@@ -24,6 +24,11 @@ module Loco
       include Resizable
       include Observable
     end
+    
+    class PageControl < UIPageControl
+      include Resizable
+      include Observable
+    end
   
     class PickerView < UIPickerView
       include Resizable
