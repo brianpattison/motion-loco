@@ -10,16 +10,10 @@ module Loco
     
     def <<(record)
       self.content << record
-      if self.belongs_to
-        self.belongs_to.send("#{self.item_class.to_s.underscore}_ids") << record.id
-      end
     end
     
     def addObjectsFromArray(objects)
       self.content.addObjectsFromArray(objects)
-      if self.belongs_to
-        self.belongs_to.send("#{self.item_class.to_s.underscore}_ids=") << self.content.map(&:id)
-      end
     end
     
     def initialize(properties={})
@@ -36,11 +30,13 @@ module Loco
         self.content.addObject(type.new(item_data))
       end
       
-      if self.belongs_to
-        self.belongs_to.send("#{type.to_s.underscore}_ids=", self.content.map(&:id))
-      end
+      @loaded = true
       
       self
+    end
+    
+    def loaded?
+      @loaded
     end
     
     def method_missing(method, *args, &block)
