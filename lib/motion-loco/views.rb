@@ -63,6 +63,16 @@ module Loco
     class View < UIView
       include Resizable
       include Observable
+      
+      def border_radius
+        self.layer.cornerRadius
+      end
+      alias_method :borderRadius, :border_radius
+      
+      def border_radius=(radius)
+        self.layer.cornerRadius = radius
+      end
+      alias_method :borderRadius=, :border_radius=
     end
   
     class WebView < UIWebView
