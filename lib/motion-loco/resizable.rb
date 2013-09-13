@@ -10,8 +10,12 @@ module Loco
     # @return [Integer]
     attr_accessor :bottom
     def bottom
-      if @bottom.is_a?(String) && self.parentView
-        self.parentView.bounds.size.height  * (@bottom.gsub('%', '').to_f / 100.0)
+      if @bottom.is_a?(String)
+        if self.parentView
+          self.parentView.bounds.size.height  * (@bottom.gsub('%', '').to_f / 100.0)
+        else
+          0
+        end
       else
         @bottom
       end
@@ -25,8 +29,8 @@ module Loco
     # @return [Integer]
     attr_accessor :height
     def height
-      if @height.is_a?(String) && self.parentView
-        self.parentView.bounds.size.height  * (@height.gsub('%', '').to_f / 100.0)
+      if @height.is_a?(String)
+        self.parentView ? self.parentView.bounds.size.height  * (@height.gsub('%', '').to_f / 100.0) : 0
       else
         @height
       end
@@ -41,8 +45,8 @@ module Loco
     # @return [Integer]
     attr_accessor :left
     def left
-      if @left.is_a?(String) && self.parentView
-        self.parentView.bounds.size.width  * (@left.gsub('%', '').to_f / 100.0)
+      if @left.is_a?(String)
+        self.parentView ? self.parentView.bounds.size.width  * (@left.gsub('%', '').to_f / 100.0) : 0
       else
         @left
       end
@@ -57,8 +61,8 @@ module Loco
     # @return [Integer]
     attr_accessor :right
     def right
-      if @right.is_a?(String) && self.parentView
-        self.parentView.bounds.size.width  * (@right.gsub('%', '').to_f / 100.0)
+      if @right.is_a?(String)
+        self.parentView ? self.parentView.bounds.size.width  * (@right.gsub('%', '').to_f / 100.0) : 0
       else
         @right
       end
@@ -73,8 +77,8 @@ module Loco
     # @return [Integer]
     attr_accessor :top
     def top
-      if @top.is_a?(String) && self.parentView
-        self.parentView.bounds.size.height  * (@top.gsub('%', '').to_f / 100.0)
+      if @top.is_a?(String)
+        self.parentView ? self.parentView.bounds.size.height  * (@top.gsub('%', '').to_f / 100.0) : 0
       else
         @top
       end
@@ -88,8 +92,8 @@ module Loco
     # @return [Integer]
     attr_accessor :width
     def width
-      if @width.is_a?(String) && self.parentView
-        self.parentView.bounds.size.width  * (@width.gsub('%', '').to_f / 100.0)
+      if @width.is_a?(String)
+        self.parentView ? self.parentView.bounds.size.width  * (@width.gsub('%', '').to_f / 100.0) : 0
       else
         @width
       end
