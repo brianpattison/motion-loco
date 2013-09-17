@@ -293,24 +293,18 @@ class AdapterTestHelper
               end
             
               wait @wait_for do
-                @post.comments.length.should.equal 2
-                @post.comment_ids.length.should.equal 2
+                @comments = Comment.where(post_id: @post.id) do |comments|
+                  resume if @wait_for.nil?
+                end
+                
+                wait @wait_for do
+                  @comments.length.should.equal 2
+                end
               end
             end
           end
         end
         
-      end
-    
-      it "should load has_many ids" do
-        @post = Post.find(@saved_post_id) do |post|
-          resume if @wait_for.nil?
-        end
-      
-        wait @wait_for do
-          @post.comment_ids.length.should.equal 2
-          @post.comment_ids.include?(@saved_comment_id_has_many).should.equal true
-        end
       end
          
       it "should load a has_many relationship when given a block" do

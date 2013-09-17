@@ -14,6 +14,7 @@ module Loco
       end
       save_data_for_type(type)
       load(type, record, data)
+      save_has_many(record)
       block.call(record) if block.is_a? Proc
       record
     end
@@ -73,6 +74,7 @@ module Loco
         end
         save_data_for_type(type)
         load(type, record, data)
+        save_has_many(record)
         block.call(record) if block.is_a? Proc
         record
       else
@@ -184,6 +186,15 @@ module Loco
     def save_data_for_type(type)
       error = Pointer.new(:object)
       raise "Error when saving #{type}: #{error[0].description}" unless context(type).save(error)
+    end
+    
+    def save_has_many(record)
+      record.class.get_class_relationships.select{|relationship| relationship[:has_many] }.each do |relationship|
+        related = record.send("#{relationship[:has_many]}")
+        related.each do |r|
+          r.save
+        end
+      end
     end
     
     def transform_data(type, data)

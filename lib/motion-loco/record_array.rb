@@ -11,12 +11,13 @@ module Loco
     property :length, :integer
     
     def <<(record)
-      self.content << record
-      update_properties
-      self
+      self.addObjectsFromArray([record])
     end
     
     def addObjectsFromArray(objects)
+      objects.each do |object|
+        object.send("#{self.belongs_to.class.to_s.underscore}=", self.belongs_to) if self.belongs_to
+      end
       self.content.addObjectsFromArray(objects)
       update_properties
       self
