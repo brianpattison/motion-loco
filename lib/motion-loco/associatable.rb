@@ -61,26 +61,30 @@ module Loco
         define_method "#{model}" do |&block|
           has_many_class = model.to_s.singularize.classify.constantize
           
-          records = instance_variable_get("@#{model}")
-          if records.loaded?
-            block.call(records) if block.is_a? Proc
-            records
+          record_array = instance_variable_get("@#{model}")
+          if record_array.is_loaded
+            block.call(record_array) if block.is_a? Proc
+            record_array
           else
             has_many_ids = instance_variable_get("@#{model.to_s.singularize}_ids")
             if has_many_ids
-              record_array = has_many_class.find(has_many_ids) do |records|
-                records.belongs_to = self
-                block.call(records) if block.is_a? Proc
+              array = has_many_class.find(has_many_ids) do |records|
+                record_array.load(records)
+                instance_variable_set("@#{model}", record_array)
+                block.call(record_array) if block.is_a? Proc
               end
+              record_array.load(array)
             else
               query = {}
               query["#{self.class.to_s.underscore.singularize}_id"] = self.id
-              record_array = has_many_class.find(query) do |records|
-                records.belongs_to = self
-                block.call(records) if block.is_a? Proc
+              array = has_many_class.find(query) do |records|
+                record_array.load(records)
+                instance_variable_set("@#{model}", record_array)
+                block.call(record_array) if block.is_a? Proc
               end
+              record_array.load(array)
             end
-            record_array.belongs_to = self
+            instance_variable_set("@#{model}", record_array)
             record_array
           end
         end

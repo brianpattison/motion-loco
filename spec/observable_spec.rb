@@ -139,7 +139,6 @@ describe "Loco::Observable" do
     
     it "should be able to bind properties to singleton Loco::Controller using a string" do
       class PersonController < Loco::Controller
-        property :content
       end
       
       @brother = Person.new(

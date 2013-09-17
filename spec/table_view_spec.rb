@@ -2,8 +2,7 @@ class CellItem < Loco::Model
   property :title
 end
 
-class ItemsController < Loco::Controller
-  property :content
+class ItemsController < Loco::ArrayController
 end
 
 describe "Loco::UI::TableViewCell" do
@@ -46,7 +45,7 @@ describe "Loco::UI::TableView" do
     @table_view.content.last.title.should.equal 'RubyMotion'
   end
   
-  it "should be able to bind its content to a Loco::Controller" do
+  it "should be able to bind its content to a Loco::ArrayController" do
     @items = [CellItem.new(title: 'Bound'), CellItem.new(title: 'Items')]
     @table_view = Loco::UI::TableView.alloc.initWithFrame(
       content_binding: 'ItemsController.content',
@@ -55,7 +54,7 @@ describe "Loco::UI::TableView" do
       right: 0,
       top: 0
     )
-    @table_view.content.should.equal nil
+    @table_view.content.length.should.equal 0
     
     ItemsController.content = @items
     @table_view.content.length.should.equal 2

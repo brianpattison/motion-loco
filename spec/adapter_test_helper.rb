@@ -272,7 +272,9 @@ class AdapterTestHelper
     
         it "should save a has_many relationship" do
           @post = Post.find(@saved_post_id) do |post|
-            resume if @wait_for.nil?
+            post.comments do |comments|
+              resume if @wait_for.nil?
+            end
           end
       
           wait @wait_for do
@@ -285,11 +287,13 @@ class AdapterTestHelper
             wait @wait_for do
               @saved_comment_id_has_many = @comment.id
               @post.comments << @comment
+              
               @post.save do |post|
                 resume if @wait_for.nil?
               end
             
               wait @wait_for do
+                @post.comments.length.should.equal 2
                 @post.comment_ids.length.should.equal 2
               end
             end
@@ -310,7 +314,7 @@ class AdapterTestHelper
       end
          
       it "should load a has_many relationship when given a block" do
-        @post = Post.find(@saved_post_id) do |comment|
+        @post = Post.find(@saved_post_id) do |post|
           resume if @wait_for.nil?
         end
       
