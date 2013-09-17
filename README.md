@@ -10,7 +10,7 @@ computed properties, and observers. **And Ember-Data inspired [data](#locofixtur
 
 #### SQLiteAdapter and Relationships!
 
-I need to write up some better documentation, but be sure to check out the [Loco::SQLiteAdapter](locosqliteadapter) and the new `has_many` and `belongs_to` relationships in `Loco::Model`.
+I need to write up some better documentation, but be sure to check out the [Loco::SQLiteAdapter](#locosqliteadapter) and the new `has_many` and `belongs_to` relationships in `Loco::Model`.
 
 The relationship stuff needs some major code clean up, so don't copy my code if you're doing anything similar for loading/saving relationship data. :)
 
