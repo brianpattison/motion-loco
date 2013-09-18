@@ -11,8 +11,8 @@ module Loco
     attr_accessor :bottom
     def bottom
       if @bottom.is_a?(String)
-        if self.parentView
-          self.parentView.bounds.size.height  * (@bottom.gsub('%', '').to_f / 100.0)
+        if self.parent_view
+          self.parent_view.bounds.size.height  * (@bottom.gsub('%', '').to_f / 100.0)
         else
           0
         end
@@ -30,7 +30,7 @@ module Loco
     attr_accessor :height
     def height
       if @height.is_a?(String)
-        self.parentView ? self.parentView.bounds.size.height  * (@height.gsub('%', '').to_f / 100.0) : 0
+        self.parent_view ? self.parent_view.bounds.size.height  * (@height.gsub('%', '').to_f / 100.0) : 0
       else
         @height
       end
@@ -46,7 +46,7 @@ module Loco
     attr_accessor :left
     def left
       if @left.is_a?(String)
-        self.parentView ? self.parentView.bounds.size.width  * (@left.gsub('%', '').to_f / 100.0) : 0
+        self.parent_view ? self.parent_view.bounds.size.width  * (@left.gsub('%', '').to_f / 100.0) : 0
       else
         @left
       end
@@ -62,7 +62,7 @@ module Loco
     attr_accessor :right
     def right
       if @right.is_a?(String)
-        self.parentView ? self.parentView.bounds.size.width  * (@right.gsub('%', '').to_f / 100.0) : 0
+        self.parent_view ? self.parent_view.bounds.size.width  * (@right.gsub('%', '').to_f / 100.0) : 0
       else
         @right
       end
@@ -78,7 +78,7 @@ module Loco
     attr_accessor :top
     def top
       if @top.is_a?(String)
-        self.parentView ? self.parentView.bounds.size.height  * (@top.gsub('%', '').to_f / 100.0) : 0
+        self.parent_view ? self.parent_view.bounds.size.height  * (@top.gsub('%', '').to_f / 100.0) : 0
       else
         @top
       end
@@ -93,7 +93,7 @@ module Loco
     attr_accessor :width
     def width
       if @width.is_a?(String)
-        self.parentView ? self.parentView.bounds.size.width  * (@width.gsub('%', '').to_f / 100.0) : 0
+        self.parent_view ? self.parent_view.bounds.size.width  * (@width.gsub('%', '').to_f / 100.0) : 0
       else
         @width
       end
@@ -293,7 +293,7 @@ module Loco
     
     # Fires when the superview changes.
     def willMoveToSuperview(superview)
-      self.parentView = superview
+      self.parent_view = superview
       refresh_layout(superview)
     end
     
