@@ -2,13 +2,11 @@
   {
     "id": 1,
     "title": "Loco::Adapter Tests",
-    "body": "Use the AdapterTestHelper to test your data adapter.",
-    "comment_ids": [1, 3]
+    "body": "Use the AdapterTestHelper to test your data adapter."
   },
   {
     "id": 2,
     "title": "Another Post for Testing", 
-    "body": "Making sure the tests aren't just getting lucky.",
-    "comment_ids": [2]
+    "body": "Making sure the tests aren't just getting lucky."
   }
 ]
