@@ -1,9 +1,13 @@
 module Loco
   
   module Resizable
-    attr_accessor :parent_view
-    alias_method :parentView, :parent_view
-    alias_method :parentView=, :parent_view=
+    attr_accessor :parent_view, :parentView
+    
+    # Required for bindings to work for both styles
+    def parent_view=(view)
+      self.parentView = view
+      super
+    end
     
     # The position of the bottom edge,
     # relative to the superview's bottom edge.
