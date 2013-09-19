@@ -20,14 +20,6 @@ module Loco
       self
     end
     
-    # Used to create observable views.
-    def initWithFrame(frame)
-      super
-      initialize_bindings
-      set_properties({})
-      self
-    end
-    
     # Used to create observable table view cells
     def initWithStyle(style, reuseIdentifier:reuseIdentifier)
       super

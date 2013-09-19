@@ -19,11 +19,7 @@ module Loco
     end
     
     def self.method_missing(method, *args, &block)
-      if self.instance.respond_to? method
-        self.instance.send(method, *args)
-      else
-        super
-      end
+      self.instance.send(method, *args, &block)
     end
   end
   

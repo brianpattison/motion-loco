@@ -1,6 +1,7 @@
 module Loco
   
   module Resizable
+    include Observable
     attr_accessor :parent_view, :parentView
     
     # Required for bindings to work for both styles
@@ -109,17 +110,17 @@ module Loco
     
     # Create new instance from a hash of properties with values.
     # @param [Object] frame The CGRect or a Hash of properties.
-    def initWithFrame(frame)
-      if frame.is_a? Hash
+    def initWithFrame(properties={})
+      if properties.is_a? Hash
         # Set the initial property values from the given hash
         super(CGRect.new)
-        frame.each do |key, value|
-          self.send("#{key}=", value)
-        end
+        initialize_bindings
+        set_properties(properties)
       else
-        super(frame)
+        super(properties)
       end
       view_setup
+      
       self
     end
     
@@ -299,6 +300,10 @@ module Loco
     def willMoveToSuperview(superview)
       self.parent_view = superview
       refresh_layout(superview)
+    end
+    
+    def self.included(base)
+      base.extend(Observable::ClassMethods)
     end
     
   end
