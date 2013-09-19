@@ -6,15 +6,9 @@ computed properties, and observers. **And Ember-Data inspired [data](#locofixtur
 
 ## What's New!
 
-### June 23th, 2013
+### September 19th, 2013
 
-#### SQLiteAdapter and Relationships!
-
-I need to write up some better documentation, but be sure to check out the [Loco::SQLiteAdapter](#locosqliteadapter) and the new `has_many` and `belongs_to` relationships in `Loco::Model`.
-
-The relationship stuff needs some major code clean up, so don't copy my code if you're doing anything similar for loading/saving relationship data. :)
-
-The [tests](https://github.com/brianpattison/motion-loco/tree/master/spec) all pass though... so that's something, right?
+Motion-Loco is being actively developed again after a few months of nothing, so yay!
 
 ## Installation
 
