@@ -88,7 +88,7 @@ module Loco
       # UITableViewDelegate implementation for returning the number of rows in a section.
       # @return [Integer]
       def tableView(tableView, numberOfRowsInSection:section)
-        if self.content.is_a? Array
+        if self.content.respond_to?(:length)
           self.content.length
         else
           0
