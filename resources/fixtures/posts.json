@@ -1,11 +1,13 @@
 [
   {
     "id": 1,
+    "author_id": 1,
     "title": "Loco::Adapter Tests",
     "body": "Use the AdapterTestHelper to test your data adapter."
   },
   {
     "id": 2,
+    "author_id": 1,
     "title": "Another Post for Testing", 
     "body": "Making sure the tests aren't just getting lucky."
   }

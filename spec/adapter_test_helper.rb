@@ -15,6 +15,7 @@ class AdapterTestHelper
       
       it "should assign the adapter to the model with optional arguments" do
         should.not.raise(NoMethodError, TypeError) do
+          BlogUser.adapter(adapter, *args)
           Comment.adapter(adapter, *args)
           Post.adapter(adapter, *args)
         end
@@ -26,25 +27,35 @@ class AdapterTestHelper
         
         @saved_post_id = 1
         @saved_post_id_confirm = 2
+        @saved_user_id = 1
         
       else
       
         it "should save a new record and assign the ID back to the record" do
-          @post = Post.new(title: "Loco::Adapter Tests", body: "Use the AdapterTestHelper to test your data adapter.")
-          @post.id.nil?.should.equal true
-        
-          @post.save do |post|
+          @user = BlogUser.new(first_name: "Brian", last_name: "Pattison")
+          
+          @user.save do |user|
+            @saved_user_id = user.id
             resume if @wait_for.nil?
           end
-  
+          
           wait @wait_for do
-            @saved_post_id = @post.id
-            @saved_post_id.nil?.should.equal false
+            @post = Post.new(author: @user, title: "Loco::Adapter Tests", body: "Use the AdapterTestHelper to test your data adapter.")
+            @post.id.nil?.should.equal true
+        
+            @post.save do |post|
+              resume if @wait_for.nil?
+            end
+  
+            wait @wait_for do
+              @saved_post_id = @post.id
+              @saved_post_id.nil?.should.equal false
+            end
           end
         end
     
         it "should save another record for testing stuff" do
-          @post_confirm = Post.new(title: "Another Post for Testing", body: "Making sure the tests aren't just getting lucky.")
+          @post_confirm = Post.new(author: @user, title: "Another Post for Testing", body: "Making sure the tests aren't just getting lucky.")
           @post_confirm.id.nil?.should.equal true
       
           @post_confirm.save do |post|
@@ -257,6 +268,24 @@ class AdapterTestHelper
         end
       end
       
+      it "should load a belongs_to relationship by given class" do
+        @post = Post.find(@saved_post_id) do |post|
+          resume if @wait_for.nil?
+        end
+    
+        wait @wait_for do
+          @post.author do
+            resume if @wait_for.nil?
+          end
+          
+          wait @wait_for do
+            @post.author.id.should.equal(@saved_user_id)
+            @post.author.first_name.should.equal("Brian")
+            @post.author.last_name.should.equal("Pattison")
+          end
+        end
+      end
+      
       ##### Has Many Relationships
       
       if options[:readonly]
@@ -319,6 +348,22 @@ class AdapterTestHelper
         
           wait @wait_for do
             @post.comments.first.body.should.equal "Testing, testing, testing."
+          end
+        end
+      end
+      
+      it "should load a has_many relationship by given class" do
+        @user = BlogUser.find(@saved_user_id) do |user|
+          resume if @wait_for.nil?
+        end
+    
+        wait @wait_for do
+          @user.posts do
+            resume if @wait_for.nil?
+          end
+          
+          wait @wait_for do
+            @user.posts.length.should.equal(2)
           end
         end
       end
@@ -445,6 +490,28 @@ class AdapterTestHelper
           
               wait @wait_for do
                 @comments.length.should.equal 0
+              end
+            end
+          end
+        end
+        
+        it "should delete the saved user" do
+          @user = BlogUser.find(@saved_user_id) do |user|
+            resume if @wait_for.nil?
+          end
+      
+          wait @wait_for do
+            @user.destroy do |user|
+              resume if @wait_for.nil?
+            end
+        
+            wait @wait_for do            
+              @users = BlogUser.all do |users|
+                resume if @wait_for.nil?
+              end
+          
+              wait @wait_for do
+                @users.length.should.equal 0
               end
             end
           end
