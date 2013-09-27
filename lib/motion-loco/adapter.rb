@@ -147,7 +147,7 @@ module Loco
     serialize: lambda{|value|
       dateFormatter = NSDateFormatter.alloc.init
       dateFormatter.setDateFormat('yyyy-MM-dd')
-      value = dateFormatter.stringFromDate(value)
+      dateFormatter.stringFromDate(value)
     },
     deserialize: lambda{|value|
       if value.is_a? NSDate

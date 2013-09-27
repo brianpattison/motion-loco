@@ -141,6 +141,25 @@ module Loco
       @url = url
     end
     
+    Adapter.register_transform(:datetime, {
+      serialize: lambda{|value|
+        dateFormatter = NSDateFormatter.alloc.init
+        dateFormatter.setTimeZone(NSTimeZone.timeZoneWithName('UTC'))
+        dateFormatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        dateFormatter.stringFromDate(value)
+      },
+      deserialize: lambda{|value|
+        if value.is_a? NSDate
+          value
+        else
+          dateFormatter = NSDateFormatter.alloc.init
+          dateFormatter.setTimeZone(NSTimeZone.timeZoneWithName('UTC'))
+          dateFormatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+          dateFormatter.dateFromString(value.to_s)
+        end
+      }
+    })
+    
   end
   
 end

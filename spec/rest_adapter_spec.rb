@@ -22,16 +22,15 @@ describe "Loco::RESTAdapter" do
     AdapterTestHelper.run('Loco::RESTAdapter', { async: true }, 'http://localhost:3000').should.equal true
   end
   
-  # it "should serialize the belongs_to id" do
-  #   @post = Post.find(1)
-  #   @comment = Comment.new(post: @post)
-  #   @comment.post_id.should.equal 1
-  #   @comment.serialize(root: false)[:post_id].should.equal 1
-  # end
-  # 
-  # it "should serialize the has_many ids" do
-  #   @post = Post.new
-  #   @post.comments = Comment.find([3, 4, 5])
-  #   @post.serialize(root: false)[:comment_ids].should.equal [3, 4, 5]
-  # end
+  it "should transform a UTC datetime" do
+    transforms = Loco::Adapter.get_transforms[:datetime]
+    date = '2013-09-27T18:34:38Z'
+    
+    date = transforms[:deserialize].call(date)
+    date.is_a?(NSDate).should.equal true
+    
+    date = transforms[:serialize].call(date)
+    date.should.equal '2013-09-27T18:34:38Z'
+  end
+  
 end
