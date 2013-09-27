@@ -36,6 +36,7 @@ module Loco
         self.send("#{key}=", value)
       end
     end
+    alias_method :setProperties, :set_properties
     
     # Change one or many properties from a hash of properties with values.
     # Only updates attributes defined with #property.
@@ -48,6 +49,7 @@ module Loco
         end
       end
     end
+    alias_method :updateAttributes, :update_attributes
     
     def method_missing(method, *args, &block)
       if method.end_with?('_binding=') || method.end_with?('Binding=')
@@ -143,6 +145,8 @@ module Loco
         
         unless @class_properties.include? name
           attr_accessor name
+          alias_method name.to_s.camelize(:lower), name
+          alias_method "#{name.to_s.camelize(:lower)}=", "#{name}="
         end
         
         if type.is_a? Proc

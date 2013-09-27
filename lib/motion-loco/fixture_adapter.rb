@@ -13,7 +13,8 @@ module Loco
     def find(record, id, &block)
       type = record.class
       error = Pointer.new(:id)
-      file = File.read(File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.pluralize}.json"))
+      filename = File.join(NSBundle.mainBundle.resourcePath, "fixtures", "#{type.to_s.underscore.gsub('nskvo_notifying_', '').pluralize}.json")
+      file = File.read(filename)
       data = NSJSONSerialization.JSONObjectWithData(file.to_data, options:JSON_OPTIONS, error:error).find{|obj| obj[:id] == id }
       if data
         load(type, record, data)

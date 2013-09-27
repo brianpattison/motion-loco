@@ -9,6 +9,7 @@ module Loco
     property :is_loaded, :string
     property :item_class
     property :length, :integer
+    property :relationship, :hash
     
     def <<(record)
       self.addObjectsFromArray([record])
@@ -56,7 +57,7 @@ module Loco
     def update_properties
       self.length = self.content.length
       if self.belongs_to
-        self.belongs_to.send("#{self.item_class.to_s.underscore.singularize}_ids=", self.content.map(&:id))
+        self.belongs_to.send("#{self.relationship[:has_many].to_s.singularize}_ids=", self.content.map(&:id))
       end
     end
     
