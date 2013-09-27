@@ -106,41 +106,6 @@ PersonController.content = @person
 @label.text # "Brian Pattison"
 ```
 
-### Loco::UI::TableView
-
-A `Loco::UI::TableView` is used for to easily bind a collection of objects
-to a `UITableView` and each item in the collection to a reusable `UITableViewCell`.
-
-```ruby
-class MyTableViewCell < Loco::UI::TableViewCell
-  # The `view_setup` method is called the first time the cell is created.
-  # Bindings can be made to the item assigned to the cell
-  # by binding to `parentView.content`.
-  def view_setup
-    @label = Loco::UI::Label.alloc.initWithFrame(
-      textBinding: 'parentView.content.first_name',
-      height: 30,
-      left: 60,
-      right: 30,
-      top: 5
-    )
-    self.addSubview(@label)
-  end
-end
-
-class MyTableView < Loco::UI::TableView
-  item_view_class MyTableViewCell
-end
-
-@table_view = MyTableView.alloc.initWithFrame(
-  content: [Person.new(first_name: 'Brian'), Person.new(first_name: 'Kirsten')],
-  bottom: 0,
-  left: 0,
-  right: 0,
-  top: 0
-)
-```
-
 ### Loco::FixtureAdapter
 
 ```ruby
