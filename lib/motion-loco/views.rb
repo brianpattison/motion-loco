@@ -46,6 +46,19 @@ module Loco
       include Resizable
     end
     
+    class TableViewCell < UITableViewCell
+      include Observable
+
+      property :content
+
+      def initWithStyle(style, reuseIdentifier:reuseIdentifier)
+        initialize_bindings
+        set_properties({})
+        view_setup # Needed because it's not Loco::Resizable
+        self
+      end
+    end
+    
     class TextField < UITextField
       include Resizable
       include TextAlignable

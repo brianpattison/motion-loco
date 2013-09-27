@@ -20,14 +20,6 @@ module Loco
       self
     end
     
-    # Used to create observable table view cells
-    def initWithStyle(style, reuseIdentifier:reuseIdentifier)
-      super
-      initialize_bindings
-      set_properties({})
-      self
-    end
-    
     # Change one or many properties from a hash of properties with values.
     # @param [Hash] properties_hash
     def set_properties(properties_hash)
