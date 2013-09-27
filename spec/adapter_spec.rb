@@ -45,6 +45,17 @@ describe "Loco::Adapter" do
       date.should.equal '2013-06-09'
     end
     
+    it "should transform a UTC datetime" do
+      transforms = Loco::Adapter.get_transforms[:datetime]
+      date = '2013-09-27T18:34:38Z'
+    
+      date = transforms[:deserialize].call(date)
+      date.is_a?(NSDate).should.equal true
+    
+      date = transforms[:serialize].call(date)
+      date.should.equal '2013-09-27T18:34:38Z'
+    end
+    
     it "should transform floats" do
       transforms = Loco::Adapter.get_transforms[:float]
       

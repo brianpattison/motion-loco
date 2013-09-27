@@ -143,6 +143,15 @@ module Loco
     end
   end
   
+  Adapter.register_transform(:array, {
+    serialize: lambda{|value|
+      value.to_a
+    },
+    deserialize: lambda{|value|
+      value.to_a
+    }
+  })
+  
   Adapter.register_transform(:date, {
     serialize: lambda{|value|
       dateFormatter = NSDateFormatter.alloc.init
@@ -160,12 +169,22 @@ module Loco
     }
   })
   
-  Adapter.register_transform(:array, {
+  Adapter.register_transform(:datetime, {
     serialize: lambda{|value|
-      value.to_a
+      dateFormatter = NSDateFormatter.alloc.init
+      dateFormatter.setTimeZone(NSTimeZone.timeZoneWithName('UTC'))
+      dateFormatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+      dateFormatter.stringFromDate(value)
     },
     deserialize: lambda{|value|
-      value.to_a
+      if value.is_a? NSDate
+        value
+      else
+        dateFormatter = NSDateFormatter.alloc.init
+        dateFormatter.setTimeZone(NSTimeZone.timeZoneWithName('UTC'))
+        dateFormatter.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        dateFormatter.dateFromString(value.to_s)
+      end
     }
   })
   
