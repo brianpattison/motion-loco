@@ -194,5 +194,98 @@ describe "Loco::Observable" do
       end
     end
     
+    it "should add aliased methods to camel cased properties when defined as an underscored property" do
+      class Person
+        property :favorite_movie, :string
+      end
+      
+      @person = Person.new(favorite_movie: 'Tommy Boy')
+      @person.favoriteMovie.should.equal 'Tommy Boy'
+      
+      @person.favoriteMovie = 'The Matrix'
+      @person.favorite_movie.should.equal 'The Matrix'
+    end
+    
+    it "should observe camel cased properties when defined as an underscored property" do
+      class Person
+        property :favorite_movie_sentence, lambda{|person|
+          "#{person.first_name} #{person.last_name}'s favorite movie is #{person.favoriteMovie}"
+        }.property(:first_name, :last_name, :favoriteMovie)
+      end
+      
+      @person = Person.new(
+        first_name: 'Brian',
+        last_name: 'Pattison',
+        favorite_movie: 'Tommy Boy'
+      )
+      @person.favorite_movie_sentence.should.equal "Brian Pattison's favorite movie is Tommy Boy"
+      @person.favoriteMovieSentence.should.equal "Brian Pattison's favorite movie is Tommy Boy"
+      
+      @person.favoriteMovie = 'The Matrix'
+      @person.favorite_movie_sentence.should.equal "Brian Pattison's favorite movie is The Matrix"
+      @person.favoriteMovieSentence.should.equal "Brian Pattison's favorite movie is The Matrix"
+    end
+    
+    it "should add aliased methods to underscored properties when defined as an camel cased property" do
+      class Person
+        property :favoriteFood, :string
+      end
+      
+      @person = Person.new(favoriteFood: 'Pizza')
+      @person.favorite_food.should.equal 'Pizza'
+      
+      @person.favorite_food = 'BBQ Ribs'
+      @person.favoriteFood.should.equal 'BBQ Ribs'
+    end
+    
+    it "should observe underscored properties when defined as a camel cased property" do
+      class Person
+        property :favorite_food_sentence, lambda{|person|
+          "#{person.first_name} #{person.last_name}'s favorite food is #{person.favorite_food}"
+        }.property(:first_name, :last_name, :favorite_food)
+      end
+      
+      @person = Person.new(
+        first_name: 'Brian',
+        last_name: 'Pattison',
+        favoriteFood: 'Pizza'
+      )
+      @person.favorite_food_sentence.should.equal "Brian Pattison's favorite food is Pizza"
+      @person.favoriteFoodSentence.should.equal "Brian Pattison's favorite food is Pizza"
+      
+      @person.favorite_food = 'BBQ Ribs'
+      @person.favorite_food_sentence.should.equal "Brian Pattison's favorite food is BBQ Ribs"
+      @person.favoriteFoodSentence.should.equal "Brian Pattison's favorite food is BBQ Ribs"
+    end
+    
+    it "should be able to bind properties to a chain of objects regardless of underscore or camel case preference" do      
+      @brother = Person.new(
+        first_name: 'Brian',
+        last_name:  'Pattison'
+      )
+      @sister = Person.new(
+        first_name: 'Kirsten', 
+        last_name:  'Pattison',
+        brothers_name_binding: 'brother.fullName'
+      )
+      @sister.brothers_name.should.equal nil
+      
+      @bound_to_brother = Person.new(
+        first_name_binding: [@sister, 'brother.first_name'],
+        last_name_binding:  [@sister, 'brother.lastName']
+      )
+      @bound_to_brother.firstName.should.equal nil
+      @bound_to_brother.last_name.should.equal nil
+      
+      @sister.brother = @brother
+      @sister.brothers_name.should.equal 'Brian Pattison'
+      @bound_to_brother.full_name.should.equal 'Brian Pattison'
+      
+      @sister.brother.firstName = 'B'
+      @sister.brother.last_name = 'Money'
+      @sister.brothersName.should.equal 'B Money'
+      @bound_to_brother.full_name.should.equal 'B Money'
+    end
+    
   end
 end

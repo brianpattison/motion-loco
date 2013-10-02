@@ -44,8 +44,8 @@ module Loco
     alias_method :updateAttributes, :update_attributes
     
     def method_missing(method, *args, &block)
-      if method.end_with?('_binding=') || method.end_with?('Binding=')
-        method = method.gsub('_binding=', '').gsub('Binding=', '')
+      if method.to_s.underscore.end_with?('_binding=')
+        method = method.to_s.underscore.gsub('_binding=', '')
         if args.first.is_a?(String)
           if args.first =~ /^[A-Z]/
             split_args = args.first.split('.')
@@ -59,6 +59,7 @@ module Loco
           target = args.first.first
           key_path = args.first.last
         end
+        key_path = key_path.to_s.underscore
         self.setValue(target.valueForKeyPath(key_path), forKey:method)
         register_observer(target, key_path) do
           self.setValue(target.valueForKeyPath(key_path), forKey:method)
@@ -93,12 +94,19 @@ module Loco
     
   private
   
+    # Remove observers if the object is deallocated
+    def dealloc
+      self.remove_all_observers
+      super
+    end
+  
     # Create the bindings for the computed properties and observers
     def initialize_bindings
       bindings = self.class.get_class_bindings
       
       bindings.each do |binding|
         binding[:proc].observed_properties.each do |key_path|
+          key_path = key_path.to_s.underscore
           register_observer(self, key_path) do
             new_value = binding[:proc].call(self)
             if binding[:name]
@@ -125,14 +133,9 @@ module Loco
       @observers[target][key_path.to_s] ||= []
     end
     
-    def dealloc
-      self.remove_all_observers
-      super
-    end
-    
     module ClassMethods
       def property(name, type=nil)
-        name = name.to_sym
+        name = name.to_s.underscore.to_sym
         @class_properties = get_class_properties
         
         unless @class_properties.include? name
