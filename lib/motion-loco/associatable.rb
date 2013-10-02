@@ -50,8 +50,11 @@ module Loco
           record
         end
         
-        alias_method model.to_s.camelize(:lower), model
-        alias_method "#{model.to_s.camelize(:lower)}=", "#{model}="
+        camelized = model.to_s.camelize(:lower)
+        if model.to_s != camelized
+          alias_method camelized, model
+          alias_method "#{camelized}=", "#{model}="
+        end
         
         relationships = get_class_relationships
         relationships << { belongs_to: model, class_name: options[:class_name] }
@@ -109,8 +112,11 @@ module Loco
           records
         end
         
-        alias_method model.to_s.camelize(:lower), model
-        alias_method "#{model.to_s.camelize(:lower)}=", "#{model}="
+        camelized = model.to_s.camelize(:lower)
+        if model.to_s != camelized
+          alias_method camelized, model
+          alias_method "#{camelized}=", "#{model}="
+        end
         
         relationships = get_class_relationships
         relationships << { has_many: model, class_name: options[:class_name] }

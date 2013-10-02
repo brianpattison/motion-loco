@@ -137,8 +137,11 @@ module Loco
         
         unless @class_properties.include? name
           attr_accessor name
-          alias_method name.to_s.camelize(:lower), name
-          alias_method "#{name.to_s.camelize(:lower)}=", "#{name}="
+          camelized = name.to_s.camelize(:lower)
+          if name.to_s != camelized
+            alias_method camelized, name
+            alias_method "#{camelized}=", "#{name}="
+          end
         end
         
         if type.is_a? Proc

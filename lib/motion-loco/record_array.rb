@@ -6,7 +6,7 @@ module Loco
     include Observable
     property :belongs_to
     property :content
-    property :is_loaded, :string
+    property :is_loaded, :boolean
     property :item_class
     property :length, :integer
     property :relationship, :hash
@@ -17,11 +17,18 @@ module Loco
     
     def addObjectsFromArray(objects)
       objects.each do |object|
-        object.send("#{self.belongs_to.class.to_s.underscore}=", self.belongs_to) if self.belongs_to
+        belongs_to_name = self.belongs_to.class.to_s.underscore.gsub('nskvo_notifying_', '')
+        object.send("#{belongs_to_name}=", self.belongs_to) if self.belongs_to && object.respond_to?(belongs_to_name)
       end
       self.content.addObjectsFromArray(objects)
       update_properties
       self
+    end
+    
+    def delete(object)
+      result = self.content.delete(object)
+      update_properties
+      result
     end
     
     def initialize(properties={})
