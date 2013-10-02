@@ -122,6 +122,18 @@ module Loco
         relationships << { has_many: model, class_name: options[:class_name] }
       end
       
+      # An array of the model's associations to other models.
+      # @return [Array]
+      def get_class_relationships
+        if @class_relationships.nil?
+          @class_relationships = []
+          if self.superclass.respond_to? :get_class_relationships
+            @class_relationships.concat(self.superclass.get_class_relationships)
+          end
+        end
+        @class_relationships
+      end
+      
     end
     
     def self.included(base)
