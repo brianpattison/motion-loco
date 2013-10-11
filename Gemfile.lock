@@ -45,8 +45,8 @@ GEM
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
     slop (3.4.6)
+    terminal-notifier-guard (1.5.3)
     thor (0.18.1)
-    webstub (0.6.1)
 
 PLATFORMS
   ruby
@@ -55,4 +55,4 @@ DEPENDENCIES
   guard-motion
   motion-loco!
   motion-redgreen
-  webstub
+  terminal-notifier-guard
