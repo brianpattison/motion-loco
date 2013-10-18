@@ -56,23 +56,28 @@ private
   end
   
   def self.get_value(target, key)
-    key = key.to_s.camelize(:lower)
+    key = normalize_key(key)
     value = nil
     if target.respond_to?(key)
       value = target.send(key)
-    else
-      # Check for Loco::Observable property
+    elsif target.respond_to?(:get_property_value)
+      value = target.get_property_value(key)
     end
     value
   end
   
+  def self.normalize_key(key)
+    key.to_s.camelize(:lower).to_sym
+  end
+  
   def self.set_value(target, key, value)
-    key = key.to_s.camelize(:lower)
+    key = normalize_key(key)
     if target.respond_to?("#{key}=")
-      target.send("#{key}=", value)
-    else
-      # Check for Loco::Observable property
+      value = target.send("#{key}=", value)
+    elsif target.respond_to?(:set_property_value)
+      value = target.set_property_value(key, value)
     end
+    value
   end
   
 end
