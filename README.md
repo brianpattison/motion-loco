@@ -1,6 +1,7 @@
 # Motion-Loco
 
 [![Code Climate](https://codeclimate.com/github/brianpattison/motion-loco.png)](https://codeclimate.com/github/brianpattison/motion-loco)
+[![Build Status](https://travis-ci.org/brianpattison/motion-loco.png?branch=new_hotness)](https://travis-ci.org/brianpattison/motion-loco)
 [![Dependency Status](https://gemnasium.com/brianpattison/motion-loco.png)](https://gemnasium.com/brianpattison/motion-loco)
 
 Motion-Loco is a library for [RubyMotion](http://rubymotion.com) 
