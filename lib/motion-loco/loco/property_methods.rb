@@ -1,5 +1,11 @@
 module Loco
   
+  # Returns the value for a key path for the target
+  # whether the path includes Objective-C properties
+  # or Loco::Observable properties.
+  # @param [Object] target
+  # @param [String] path
+  # @return [Object]
   def self.get(target, path=nil)
     # If the target is a string, then we should be
     # trying to get a value from a Loco::Controller
@@ -13,6 +19,19 @@ module Loco
     get_value(target, path)
   end
   
+  # Returns the camelized Symbol for the given String.
+  # @param [String] key
+  # @return [Symbol]
+  def self.normalize_key(key)
+    key.to_s.camelize(:lower).to_sym
+  end
+  
+  # Sets the value for a key path for the target
+  # whether the path includes Objective-C properties
+  # or Loco::Observable properties.
+  # @param [Object] target
+  # @param [String] path
+  # @param [Object] value
   def self.set(target, path, value=nil)
     # If the target is a string, then we should be
     # trying to set a value on a Loco::Controller
@@ -35,11 +54,11 @@ private
     value = nil
     
     split_path.each_with_index do |key, index|
-      get_value(target, key)
+      value = get_value(target, key)
       
       if value && index + 1 < path_count
         target = value
-        path = key
+        path = split_path[index + 1]
       elsif value.nil?
         break
       end
@@ -60,22 +79,18 @@ private
     value = nil
     if target.respond_to?(key)
       value = target.send(key)
-    elsif target.respond_to?(:get_property_value)
-      value = target.get_property_value(key)
+    elsif target.is_a?(Loco::Observable)
+      value = target.send(:get_property_value, key)
     end
     value
-  end
-  
-  def self.normalize_key(key)
-    key.to_s.camelize(:lower).to_sym
   end
   
   def self.set_value(target, key, value)
     key = normalize_key(key)
     if target.respond_to?("#{key}=")
       value = target.send("#{key}=", value)
-    elsif target.respond_to?(:set_property_value)
-      value = target.set_property_value(key, value)
+    elsif target.is_a?(Loco::Observable)
+      value = target.send(:set_property_value, key, value)
     end
     value
   end

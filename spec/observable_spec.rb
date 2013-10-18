@@ -17,8 +17,8 @@ describe "Loco::Observable" do
       end
     end
     
-    it "should create a class attr `class_properties` that defaults to an empty Hash" do
-      ObservableSpec::User.class_properties.should.equal({})
+    it "should include Loco::Transformable" do
+      ObservableSpec::User.ancestors.member?(Loco::Transformable).should.equal true
     end
     
     it "can define a property" do
@@ -38,45 +38,45 @@ describe "Loco::Observable" do
     end
     
     it "defined properties should default to nil" do
-      @person = ObservableSpec::User.new
-      @person.get(:first_name).should.equal nil
-      @person.get(:lastName).should.equal nil
+      @user = ObservableSpec::User.new
+      @user.get(:first_name).should.equal nil
+      @user.get(:lastName).should.equal nil
     end
     
     it "can set and get the value of a property" do
-      @person = ObservableSpec::User.new
-      @person.set(:first_name, "Brian")
-      @person.get(:first_name).should.equal "Brian"
+      @user = ObservableSpec::User.new
+      @user.set(:first_name, "Brian")
+      @user.get(:first_name).should.equal "Brian"
     end
     
     it "can use a string or a symbol to set and get the value of a property" do
-      @person = ObservableSpec::User.new
-      @person.set("first_name", "Brian")
-      @person.get("first_name").should.equal "Brian"
+      @user = ObservableSpec::User.new
+      @user.set("first_name", "Brian")
+      @user.get("first_name").should.equal "Brian"
     end
     
     it "accepts a Hash of properties on #new" do
       should.not.raise(NoMethodError, TypeError) do
-        @person = ObservableSpec::User.new(
+        @user = ObservableSpec::User.new(
           first_name: "Brian",
           lastName:  "Pattison"
         )
       end
-      @person.get(:first_name).should.equal "Brian"
-      @person.get(:lastName).should.equal "Pattison"
+      @user.get(:first_name).should.equal "Brian"
+      @user.get(:lastName).should.equal "Pattison"
     end
     
     it "can set and get the underscored and camelized versions of a property" do
-      @person = ObservableSpec::User.new
-      @person.set(:first_name, "Brian")
-      @person.set(:last_name, "Pattison")
-      @person.get(:firstName).should.equal "Brian"
-      @person.get(:lastName).should.equal "Pattison"
+      @user = ObservableSpec::User.new
+      @user.set(:first_name, "Brian")
+      @user.set(:last_name, "Pattison")
+      @user.get(:firstName).should.equal "Brian"
+      @user.get(:lastName).should.equal "Pattison"
       
-      @person.set(:firstName, "Billy")
-      @person.get(:first_name).should.equal "Billy"
-      @person.set(:lastName, "Bob")
-      @person.get(:last_name).should.equal "Bob"
+      @user.set(:firstName, "Billy")
+      @user.get(:first_name).should.equal "Billy"
+      @user.set(:lastName, "Bob")
+      @user.get(:last_name).should.equal "Bob"
     end
     
     it "can define a property with a type used for transforming values" do
@@ -88,9 +88,15 @@ describe "Loco::Observable" do
         end
       end
       
-      @person = ObservableSpec::User.new
-      @person.set(:age, "100")
-      @person.get(:age).should.equal 100
+      ObservableSpec::User.class_properties.should.equal({ 
+        firstName: { default: nil, type: nil }, 
+        lastName:  { default: nil, type: nil },
+        age:       { default: nil, type: :integer }
+      })
+      
+      @user = ObservableSpec::User.new
+      @user.set(:age, "100")
+      @user.get(:age).should.equal 100
     end
     
     it "can define a property with a default value" do
@@ -103,9 +109,17 @@ describe "Loco::Observable" do
         end
       end
       
-      @person = ObservableSpec::User.new
-      @person.get(:likes_pizza).should.equal true
-      @person.get(:slices_eaten).should.equal 0
+      ObservableSpec::User.class_properties.should.equal({ 
+        firstName:   { default: nil,  type: nil }, 
+        lastName:    { default: nil,  type: nil },
+        age:         { default: nil,  type: :integer },
+        likesPizza:  { default: true, type: :boolean },
+        slicesEaten: { default: 0,    type: :integer }
+      })
+      
+      @user = ObservableSpec::User.new
+      @user.get(:likes_pizza).should.equal true
+      @user.get(:slices_eaten).should.equal 0
     end
     
     it "can define a property with a default value without defining the type" do
@@ -117,29 +131,99 @@ describe "Loco::Observable" do
         end
       end
       
-      @person = ObservableSpec::User.new
-      @person.get(:status).should.equal "waiting for pizza"
+      ObservableSpec::User.class_properties.should.equal({ 
+        firstName:   { default: nil,  type: nil }, 
+        lastName:    { default: nil,  type: nil },
+        age:         { default: nil,  type: :integer },
+        likesPizza:  { default: true, type: :boolean },
+        slicesEaten: { default: 0,    type: :integer },
+        status:      { default: "waiting for pizza", type: nil }
+      })
+      
+      @user = ObservableSpec::User.new
+      @user.get(:status).should.equal "waiting for pizza"
     end
     
     it "can set the value of any property to nil regardless of type and/or default value" do
-      @person = ObservableSpec::User.new(
+      @user = ObservableSpec::User.new(
         first_name: "Brian",
         last_name: "Pattison",
         age: 31
       )
-      @person.set(:first_name, nil)
-      @person.set(:last_name, nil)
-      @person.set(:age, nil)
-      @person.set(:likes_pizza, nil)
-      @person.set(:slices_eaten, nil)
-      @person.set(:status, nil)
+      @user.set(:first_name, nil)
+      @user.set(:last_name, nil)
+      @user.set(:age, nil)
+      @user.set(:likes_pizza, nil)
+      @user.set(:slices_eaten, nil)
+      @user.set(:status, nil)
       
-      @person.get(:first_name).should.equal nil
-      @person.get(:last_name).should.equal nil
-      @person.get(:age).should.equal nil
-      @person.get(:likes_pizza).should.equal nil
-      @person.get(:slices_eaten).should.equal nil
-      @person.get(:status).should.equal nil
+      @user.get(:first_name).should.equal nil
+      @user.get(:last_name).should.equal nil
+      @user.get(:age).should.equal nil
+      @user.get(:likes_pizza).should.equal nil
+      @user.get(:slices_eaten).should.equal nil
+      @user.get(:status).should.equal nil
+    end
+    
+    it "should pass parent class properties down to child classes" do
+      module ObservableSpec
+        class Admin < ObservableSpec::User
+          property :is_admin, :boolean, default: true
+        end
+      end
+      
+      ObservableSpec::Admin.class_properties.should.equal({ 
+        firstName:   { default: nil,  type: nil }, 
+        lastName:    { default: nil,  type: nil },
+        age:         { default: nil,  type: :integer },
+        likesPizza:  { default: true, type: :boolean },
+        slicesEaten: { default: 0,    type: :integer },
+        status:      { default: "waiting for pizza", type: nil },
+        isAdmin:     { default: true, type: :boolean }
+      })
+      
+      @admin = ObservableSpec::Admin.new(first_name: "Brian")
+      @admin.get(:first_name).should.equal "Brian"
+      @admin.get(:last_name).should.equal nil
+      @admin.get(:age).should.equal nil
+      @admin.get(:likes_pizza).should.equal true
+      @admin.get(:slices_eaten).should.equal 0
+      @admin.get(:status).should.equal "waiting for pizza"
+      @admin.get(:is_admin).should.equal true
+    end
+    
+    it "should not pass the child properties back up to the parent class" do
+      ObservableSpec::User.class_properties.should.equal({ 
+        firstName:   { default: nil,  type: nil }, 
+        lastName:    { default: nil,  type: nil },
+        age:         { default: nil,  type: :integer },
+        likesPizza:  { default: true, type: :boolean },
+        slicesEaten: { default: 0,    type: :integer },
+        status:      { default: "waiting for pizza", type: nil }
+      })
+      
+      @user = ObservableSpec::User.new(slicesEaten: 5)
+      @user.get(:first_name).should.equal nil
+      @user.get(:last_name).should.equal nil
+      @user.get(:age).should.equal nil
+      @user.get(:likes_pizza).should.equal true
+      @user.get(:slices_eaten).should.equal 5
+      @user.get(:status).should.equal "waiting for pizza"
+      @user.get(:is_admin).should.equal nil
+    end
+    
+    it "should be able to override defaults on child classes" do
+      module ObservableSpec
+        class BadAdmin < ObservableSpec::Admin
+          property :is_admin, :boolean, default: false
+        end
+      end
+      
+      @bad_admin = ObservableSpec::BadAdmin.new
+      @bad_admin.get(:is_admin).should.equal false
+      
+      @good_admin = ObservableSpec::Admin.new
+      @good_admin.get(:is_admin).should.equal true
     end
     
   end
