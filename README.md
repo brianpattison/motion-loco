@@ -1,5 +1,8 @@
 # Motion-Loco
 
+[![Code Climate](https://codeclimate.com/github/brianpattison/motion-loco.png)](https://codeclimate.com/github/brianpattison/motion-loco)
+[![Dependency Status](https://gemnasium.com/brianpattison/motion-loco.png)](https://gemnasium.com/brianpattison/motion-loco)
+
 Motion-Loco is a library for [RubyMotion](http://rubymotion.com) 
 that includes [Ember.js](http://emberjs.com) inspired bindings, 
 computed properties, and observers.
