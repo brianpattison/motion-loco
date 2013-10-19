@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Motion-Loco by brianpattison</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Motion-Loco</h1>
+        <p>Library for RubyMotion that includes Ember.js inspired bindings, computed properties, and observers.</p>
+
+        <p class="view"><a href="https://github.com/brianpattison/motion-loco">View the Project on GitHub <small>brianpattison/motion-loco</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/brianpattison/motion-loco/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/brianpattison/motion-loco/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/brianpattison/motion-loco">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="a-complete-rewrite-is-coming-soon" class="anchor" href="#a-complete-rewrite-is-coming-soon"><span class="octicon octicon-link"></span></a>A complete rewrite is coming soon!</h2>
+
+<p>Here's a peak at the direction 
+I'm hoping to go for version 0.3.0:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">Loco</span><span class="p">:</span><span class="ss">:Model</span>
+  <span class="c1"># Properties with types and defaults</span>
+  <span class="n">property</span> <span class="ss">:first_name</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="n">property</span> <span class="ss">:last_name</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="n">property</span> <span class="ss">:login_count</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">default</span><span class="p">:</span> <span class="mi">0</span>
+
+  <span class="c1"># Computed properties</span>
+  <span class="n">property</span> <span class="ss">:full_name</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+    <span class="s2">"</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:last_name</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+  <span class="p">}</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">,</span> <span class="ss">:last_name</span><span class="p">)</span>
+
+  <span class="c1"># Associations</span>
+  <span class="n">belongs_to</span> <span class="ss">:group</span>
+  <span class="n">has_many</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">class_name</span><span class="p">:</span> <span class="no">BlogPost</span>
+
+  <span class="c1"># Computed properties will be able to </span>
+  <span class="c1"># observe a chain of properties</span>
+  <span class="n">property</span> <span class="ss">:post_count</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">length</span>
+  <span class="p">}</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="s2">"posts.length"</span><span class="p">)</span>
+
+  <span class="c1"># Computed properties based on changes made</span>
+  <span class="c1"># to records inside a Loco::RecordArray</span>
+  <span class="n">property</span> <span class="ss">:published_posts</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">select</span><span class="p">{</span><span class="o">|</span><span class="n">post</span><span class="o">|</span>
+      <span class="n">post</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:is_published</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="s2">"posts.@each.is_published"</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c1"># Everything will use #get and #set so that computed properties</span>
+<span class="c1"># can be cached and calculated only when required</span>
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">first_name</span><span class="p">:</span> <span class="s2">"Brian"</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">)</span>  <span class="c1"># "Brian"</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">)</span> <span class="c1"># 0</span>
+
+<span class="c1"># Underscore and camelized properties work the same</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="ss">:lastName</span><span class="p">,</span> <span class="s2">"Pattison"</span><span class="p">)</span> <span class="c1"># "Pattison"</span>
+
+<span class="c1"># Chained property getters/setters</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'group.name'</span><span class="p">)</span> <span class="c1"># "The Awesome Group"</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">'group.name'</span><span class="p">,</span> <span class="s2">"The Humble Group"</span><span class="p">)</span>
+
+<span class="c1"># Properties won't be KVO compliant, but it will</span>
+<span class="c1"># be easy to create observers for any observable object.</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="n">new_count</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">)</span>
+  <span class="n">user</span><span class="o">.</span><span class="n">remove_observer</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/brianpattison">brianpattison</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
