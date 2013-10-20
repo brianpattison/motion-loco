@@ -39,14 +39,22 @@ module Loco
   end
   
   def self.remove_observer(observer)
-    observers = observers_for_target_and_key(observer.target, observer.key)
+    observers_for_target_and_key = self.observers_for_target_and_key(observer.target, observer.key)
     
-    observers.delete(observer)
+    observers_for_target_and_key.delete(observer)
     
     remove_observer(observer.next_observer) if observer.next_observer
     
-    if observers.length == 0
-      self.observers.delete(key_for_target(observer.target))
+    # Remove empty keys with no observers left
+    self.observers.each do |target, hash|
+      hash.each do |key, observers|
+        if observers.length == 0
+          hash.delete(key)
+        end
+      end
+      if hash.keys.length == 0
+        self.observers.delete(target)
+      end
     end
   end
   

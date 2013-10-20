@@ -7,7 +7,7 @@ module Loco
       super
       self.target = params[:target]
       self.key_path = Loco.normalize_path(params[:key_path])
-      self.key = self.key_path.split(".")[0]
+      self.key = self.key_path.split(".")[0].to_sym
       self.proc = params[:proc]
       self.value = Loco.get(self.target, self.key_path)
       update_next_observer

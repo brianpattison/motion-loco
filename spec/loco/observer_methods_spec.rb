@@ -148,7 +148,6 @@ describe "Loco" do
       @test_string = "Test"
       
       @observer = Loco.observe(@user, "car.driver.first_name", lambda{|target, key, old_value, new_value|
-        Loco.debug("Change: #{old_value} -> #{new_value}")
         @test_string = new_value
       })
     
