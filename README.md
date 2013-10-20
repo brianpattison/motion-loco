@@ -28,7 +28,7 @@ Complete rewrite is coming soon. You can watch
 the progress in this branch if you're bored. 
 
 Here's a peak at the direction 
-I'm hoping to go for version 0.3.0:
+I'm hoping to go for version 0.4.0:
 
 ```ruby
 class User < Loco::Model
