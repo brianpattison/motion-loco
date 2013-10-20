@@ -1,21 +1,20 @@
 describe "Loco" do
   describe "- Property Methods" do
     
-    before do
-      @label = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
-    end
-    
     it "should get the value of Objective-C properties from an object" do
+      @label = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       @label.text = "Hello World"
       Loco.get(@label, :text).should.equal "Hello World"
     end
     
     it "should set the value of Objective-C properties on an object" do
+      @label = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       Loco.set(@label, :text, "Hello World")
       @label.text.should.equal "Hello World"
     end
     
-    it "should accept underscore and camelized of Objective-C property names" do
+    it "should accept underscore and camelized Objective-C property names" do
+      @label = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       Loco.set(@label, :highlighted_text_color, UIColor.blueColor)
       @label.highlightedTextColor.should.equal UIColor.blueColor
 
@@ -64,7 +63,7 @@ describe "Loco" do
       Loco.get(@user, :first_name).should.equal "Kirsten"
     end
     
-    it "should accept underscore and camelized of Loco::Observable property names" do
+    it "should accept underscore and camelized Loco::Observable property names" do
       @user = PropertyMethodsSpec::User.new
       
       Loco.set(@user, :first_name, "Brian").should.equal "Brian"

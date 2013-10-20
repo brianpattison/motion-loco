@@ -2,11 +2,32 @@ module Loco
   
   module Observable
     extend MotionSupport::Concern
-    include Loco::Transformable
     
     included do
       attr_accessor :properties
+      def properties
+        @properties ||= {}
+      end
+      
+      attr_accessor :computed_properties
+      def computed_properties
+        @computed_properties ||= {}
+      end
+      
       class_attribute :class_properties
+      def self.class_properties
+        @class_properties ||= {}
+      end
+      
+      class_attribute :class_computed_properties
+      def self.class_computed_properties
+        @class_computed_properties ||= {}
+      end
+    end
+    
+    def dealloc
+      # TODO: Remove observers
+      super
     end
     
     # Returns the value for a key path
@@ -38,7 +59,7 @@ module Loco
     end
     
     module ClassMethods
-      # Creates an property that can be accessed
+      # Create a property that can be accessed
       # using #get and #set and can be observed and
       # used for creating computed properties.
       # 
@@ -67,7 +88,7 @@ module Loco
             type = nil
           end
           
-          properties = self.class_properties || {}
+          properties = self.class_properties
           new_property = {}
           new_property[property_name] = {
             default: options[:default],
@@ -78,36 +99,64 @@ module Loco
         end
       end
       
+      # Create a property that the behaves the same way a
+      # static property, but is defined by a code block.
+      # This method is typically not called directly.
+      # 
+      # Example:
+      # 
+      #   class User
+      #     include Loco::Observable
+      #     property :first_name, :string
+      #     property :last_name, :string
+      #     property :full_name, -> {|user|
+      #       "#{user.get(:first_name)} #{user.get(:last_name)}"
+      #     }.property(:first_name, :last_name)
+      #   end
+      # 
+      # @param [Symbol] property_name
+      # @param [Proc] proc
+      def computed_property(property_name, proc)
+        property_name = Loco.normalize_key(property_name)
+        
+        computed_properties = self.class_computed_properties
+        new_computed_property = {}
+        new_computed_property[property_name] = {
+          proc: proc
+        }
+          
+        self.class_computed_properties = computed_properties.merge(new_computed_property)
+      end
+      
     end
     
   private
   
     def get_property_value(key)
-      self.properties[key]
+      if self.properties[key]
+        self.properties[key].get_value
+      else
+        # Throw no method error?
+      end
     end
     
     def initialize_properties
-      self.properties = {}
       self.class.class_properties.each do |key, options|
-        self.send(:set_property_value, key, options[:default])
+        self.properties[key] = Loco::Property.new(options.merge({ target: self }))
+      end
+      
+      self.class.class_computed_properties.each do |key, options|
+        self.computed_properties[key] = Loco::Property.new(options.merge({ target: self }))
       end
     end
     
     def set_property_value(key, value)
-      type = self.class.class_properties[key][:type]
-      value = transform_value(type, value)
-      self.properties[key] = value
-    end
-    
-    def transform_value(type, value)
-      # TODO: Transform values based on type
-      if type == :integer && !value.nil?
-        value.to_i
+      if self.properties[key]
+        self.properties[key].set_value(value)
       else
-        value
+        # Throw no method error?
       end
     end
-    
   end
   
 end

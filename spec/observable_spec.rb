@@ -17,10 +17,6 @@ describe "Loco::Observable" do
       end
     end
     
-    it "should include Loco::Transformable" do
-      ObservableSpec::User.ancestors.member?(Loco::Transformable).should.equal true
-    end
-    
     it "can define a property" do
       should.not.raise(NoMethodError, TypeError) do
         module ObservableSpec

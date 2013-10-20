@@ -1,24 +1,17 @@
 module Loco
   
   class ::Proc
-    attr_reader :observed_properties
-    def observed_properties
-      @observed_properties ||= []
+    def observed_key_paths
+      @observed_key_paths ||= []
     end
     
-    def observes(*properties)
-      properties.each {|property|
-        self.observed_properties << property
+    def observes(*key_paths)
+      key_paths.each {|key_path|
+        self.observed_key_paths << key_path
       }
       self
     end
-    
-    def property(*properties)
-      properties.each {|property|
-        self.observed_properties << property
-      }
-      self
-    end
+    alias_method :property, :observes
   end
   
 end

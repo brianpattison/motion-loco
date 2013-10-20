@@ -1,0 +1,66 @@
+module Loco
+  
+  def self.key_for_target(target)
+    "#{target.class}-#{target.object_id}"
+  end
+  
+  def self.normalize_path(key_path)
+    key_path.to_s.camelize(:lower)
+  end
+  
+  def self.observe(target, key_path, proc)
+    observer = Loco::Observer.new(
+      target: target,
+      key_path: key_path,
+      proc: proc 
+    )
+    observers_for_target_and_key(target, observer.key) << observer
+    observer
+  end
+  
+  def self.observers_for_target(target)
+    key = key_for_target(target)
+    observers[key] ||= {}
+  end
+  
+  def self.observers_for_target_and_key(target, key)
+    key = normalize_key(key)
+    observers_for_target(target)[key] ||= []
+  end
+  
+  def self.observers
+    @observers ||= {}
+  end
+  
+  def self.property_did_change(target, key, old_value, new_value)
+    self.observers_for_target_and_key(target, key).each do |observer|
+      observer.value_did_change
+    end
+  end
+  
+  def self.remove_observer(observer)
+    observers = observers_for_target_and_key(observer.target, observer.key)
+    
+    observers.delete(observer)
+    
+    remove_observer(observer.next_observer) if observer.next_observer
+    
+    if observers.length == 0
+      self.observers.delete(key_for_target(observer.target))
+    end
+  end
+  
+  def self.remove_observers(target, key_path=nil)
+    if key_path.nil?
+      self.observers.delete(key_for_target(target))
+    else
+      key_path = normalize_path(key_path)
+      observers = observers_for_target(key_path)
+      observers.delete(key_path)
+      if observers.length == 0
+        self.observers.delete(key_for_target(target))
+      end
+    end
+  end
+  
+end

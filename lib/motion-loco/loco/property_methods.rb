@@ -51,6 +51,7 @@ private
   def self.get_last_target_and_path(target, path)
     split_path = path.split(".")
     path_count = split_path.length
+    path = split_path[0]
     value = nil
     
     split_path.each_with_index do |key, index|
@@ -88,11 +89,14 @@ private
   def self.set_value(target, key, value)
     key = normalize_key(key)
     if target.respond_to?("#{key}=")
-      value = target.send("#{key}=", value)
+      old_value = target.send(key)
+      new_value = target.send("#{key}=", value)
     elsif target.is_a?(Loco::Observable)
-      value = target.send(:set_property_value, key, value)
+      old_value = target.send(:get_property_value, key)
+      new_value = target.send(:set_property_value, key, value)
     end
-    value
+    property_did_change(target, key, old_value, new_value)
+    new_value
   end
   
 end
