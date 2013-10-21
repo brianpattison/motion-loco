@@ -28,10 +28,10 @@
         </ul>
       </header>
       <section>
-        <h2>
-<a name="a-complete-rewrite-is-coming-soon" class="anchor" href="#a-complete-rewrite-is-coming-soon"><span class="octicon octicon-link"></span></a>A complete rewrite is coming soon!</h2>
+        <h1>
+<a name="coming-soon" class="anchor" href="#coming-soon"><span class="octicon octicon-link"></span></a>Coming Soon...</h1>
 
-<p>Here's a peak at the direction 
+<p>Complete rewrite is coming soon. Here's a peak at the direction 
 I'm hoping to go for version 0.4.0:</p>
 
 <div class="highlight highlight-ruby"><pre><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">Loco</span><span class="p">:</span><span class="ss">:Model</span>
@@ -41,7 +41,7 @@ I'm hoping to go for version 0.4.0:</p>
   <span class="n">property</span> <span class="ss">:login_count</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">default</span><span class="p">:</span> <span class="mi">0</span>
 
   <span class="c1"># Computed properties</span>
-  <span class="n">property</span> <span class="ss">:full_name</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="n">property</span> <span class="ss">:full_name</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
     <span class="s2">"</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:last_name</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
   <span class="p">}</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="ss">:first_name</span><span class="p">,</span> <span class="ss">:last_name</span><span class="p">)</span>
 
@@ -51,13 +51,13 @@ I'm hoping to go for version 0.4.0:</p>
 
   <span class="c1"># Computed properties will be able to </span>
   <span class="c1"># observe a chain of properties</span>
-  <span class="n">property</span> <span class="ss">:post_count</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="n">property</span> <span class="ss">:post_count</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
     <span class="n">user</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">length</span>
   <span class="p">}</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="s2">"posts.length"</span><span class="p">)</span>
 
   <span class="c1"># Computed properties based on changes made</span>
   <span class="c1"># to records inside a Loco::RecordArray</span>
-  <span class="n">property</span> <span class="ss">:published_posts</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="n">property</span> <span class="ss">:published_posts</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
     <span class="n">user</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">select</span><span class="p">{</span><span class="o">|</span><span class="n">post</span><span class="o">|</span>
       <span class="n">post</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:is_published</span><span class="p">)</span>
     <span class="p">}</span>
@@ -74,16 +74,54 @@ I'm hoping to go for version 0.4.0:</p>
 <span class="vi">@user</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="ss">:lastName</span><span class="p">,</span> <span class="s2">"Pattison"</span><span class="p">)</span> <span class="c1"># "Pattison"</span>
 
 <span class="c1"># Chained property getters/setters</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'group.name'</span><span class="p">)</span> <span class="c1"># "The Awesome Group"</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">'group.name'</span><span class="p">,</span> <span class="s2">"The Humble Group"</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"group.name"</span><span class="p">)</span> <span class="c1"># "The Awesome Group"</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"group.name"</span><span class="p">,</span> <span class="s2">"The Humble Group"</span><span class="p">)</span>
 
 <span class="c1"># Properties won't be KVO compliant, but it will</span>
 <span class="c1"># be easy to create observers for any observable object.</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
-  <span class="n">new_count</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">)</span>
-  <span class="n">user</span><span class="o">.</span><span class="n">remove_observer</span><span class="p">(</span><span class="ss">:login_count</span><span class="p">)</span>
+<span class="vi">@observer</span> <span class="o">=</span> <span class="no">Loco</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="vi">@user</span><span class="p">,</span> <span class="ss">:login_count</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">target</span><span class="p">,</span> <span class="n">key_path</span><span class="p">,</span> <span class="n">old_value</span><span class="p">,</span> <span class="n">new_value</span><span class="o">|</span>
+  <span class="c1"># Do something when the login_count changes</span>
 <span class="p">})</span>
+<span class="vi">@observer</span><span class="o">.</span><span class="n">remove</span> <span class="c1"># Remove observer</span>
+
+<span class="c1"># Bindings are just as easy to create</span>
+<span class="vi">@binding</span> <span class="o">=</span> <span class="no">Loco</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="vi">@team_label</span><span class="p">,</span> <span class="ss">:text</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="vi">@user</span><span class="p">,</span> <span class="s2">"team.name"</span><span class="p">)</span>
+<span class="c1"># Changes to @user.team or @user.team.is_admin will propagate to @user.is_admin</span>
+<span class="vi">@binding</span><span class="o">.</span><span class="n">remove</span> <span class="c1"># Remove binding</span>
+
+<span class="c1"># Shortcuts will also exist for creating bindings</span>
+<span class="vi">@team_label</span><span class="o">.</span><span class="n">text_binding</span> <span class="o">=</span> <span class="o">[</span><span class="vi">@user</span><span class="p">,</span> <span class="s2">"team.name"</span><span class="o">]</span>
+<span class="c1"># or camelized if you prefer</span>
+<span class="vi">@team_label</span><span class="o">.</span><span class="n">textBinding</span> <span class="o">=</span> <span class="o">[</span><span class="vi">@user</span><span class="p">,</span> <span class="s2">"team.name"</span><span class="o">]</span>
 </pre></div>
+
+<h2>
+<a name="saving-and-loading-records-with-data-adapters" class="anchor" href="#saving-and-loading-records-with-data-adapters"><span class="octicon octicon-link"></span></a>Saving and Loading Records with Data Adapters</h2>
+
+<p>Another major overhaul coming here too. Saving and loading records will look something like this:</p>
+
+<pre><code># Promise all the things!
+@user = User.new(first_name: "Brian")
+@user.save.then(lambda {|user|
+  # User is saved!
+}, lambda {|user, error|
+  # Error saving user
+})
+
+@user = User.find(1)
+@user.then(lambda {|user|
+  # User is loaded!
+}, lambda {|user, error|
+  # Error loading user
+})
+
+@posts = @user.posts
+@posts.then(lambda {|posts|
+  # Posts are loaded!
+}, lambda {|posts, error|
+  # Error loading posts
+})
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/brianpattison">brianpattison</a></p>
