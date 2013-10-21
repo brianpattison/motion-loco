@@ -96,7 +96,7 @@ end
 
 Another major overhaul coming here too. Saving and loading records will look something like this:
 
-```
+```ruby
 # Promise all the things!
 @user = User.new(first_name: "Brian")
 @user.save.then(lambda {|user|
