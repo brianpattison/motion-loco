@@ -3,7 +3,6 @@ PATH
   specs:
     motion-loco (0.3.0)
       awesome_print_motion (~> 0.1.0)
-      bubble-wrap (~> 1.4.0)
       motion-require (~> 0.0.7)
       motion-support (~> 0.2.5)
 
@@ -11,7 +10,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     awesome_print_motion (0.1.0)
-    bubble-wrap (1.4.0)
     celluloid (0.15.2)
       timers (~> 1.1.0)
     coderay (1.0.9)

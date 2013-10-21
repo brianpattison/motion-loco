@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "awesome_print_motion", "~> 0.1.0"
-  spec.add_dependency "bubble-wrap", "~> 1.4.0"
   spec.add_dependency "motion-require", "~> 0.0.7"
   spec.add_dependency "motion-support", "~> 0.2.5"
   spec.add_development_dependency "rake"
