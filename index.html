@@ -100,28 +100,28 @@ I'm hoping to go for version 0.4.0:</p>
 
 <p>Another major overhaul coming here too. Saving and loading records will look something like this:</p>
 
-<pre><code># Promise all the things!
-@user = User.new(first_name: "Brian")
-@user.save.then(lambda {|user|
-  # User is saved!
-}, lambda {|user, error|
-  # Error saving user
-})
+<div class="highlight highlight-ruby"><pre><span class="c1"># Promise all the things!</span>
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">first_name</span><span class="p">:</span> <span class="s2">"Brian"</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">save</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="c1"># User is saved!</span>
+<span class="p">},</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="p">,</span> <span class="n">error</span><span class="o">|</span>
+  <span class="c1"># Error saving user</span>
+<span class="p">})</span>
 
-@user = User.find(1)
-@user.then(lambda {|user|
-  # User is loaded!
-}, lambda {|user, error|
-  # Error loading user
-})
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="o">|</span>
+  <span class="c1"># User is loaded!</span>
+<span class="p">},</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">user</span><span class="p">,</span> <span class="n">error</span><span class="o">|</span>
+  <span class="c1"># Error loading user</span>
+<span class="p">})</span>
 
-@posts = @user.posts
-@posts.then(lambda {|posts|
-  # Posts are loaded!
-}, lambda {|posts, error|
-  # Error loading posts
-})
-</code></pre>
+<span class="vi">@posts</span> <span class="o">=</span> <span class="vi">@user</span><span class="o">.</span><span class="n">posts</span>
+<span class="vi">@posts</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">posts</span><span class="o">|</span>
+  <span class="c1"># Posts are loaded!</span>
+<span class="p">},</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">posts</span><span class="p">,</span> <span class="n">error</span><span class="o">|</span>
+  <span class="c1"># Error loading posts</span>
+<span class="p">})</span>
+</pre></div>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/brianpattison">brianpattison</a></p>
