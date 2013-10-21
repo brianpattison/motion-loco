@@ -102,7 +102,7 @@ module Loco
       #     include Loco::Observable
       #     property :first_name, :string
       #     property :last_name, :string
-      #     property :full_name, -> {|user|
+      #     property :full_name, lambda {|user|
       #       "#{user.get(:first_name)} #{user.get(:last_name)}"
       #     }.property(:first_name, :last_name)
       #   end
@@ -118,7 +118,7 @@ module Loco
           key: property_name,
           proc: proc
         }
-          
+        
         self.class_properties = properties.merge(new_property)
       end
       
