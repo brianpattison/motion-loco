@@ -1,7 +1,7 @@
 describe "Loco" do
   describe "- Binding Methods" do
     
-    it "should be able to create a binding on an Objective-C property" do
+    it "can create a binding on an Objective-C property" do
       @label1 = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       @label2 = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       @binding = Loco.bind(@label1, :text).to(@label2, :text)
@@ -14,7 +14,7 @@ describe "Loco" do
       Loco.set(@label2, :text, "Hello World")
     end
     
-    it "should be able to remove a binding of an Objective-C property" do
+    it "can remove a binding of an Objective-C property" do
       Loco.remove_binding(@binding)
       Loco.observers.should.equal({})
     end
@@ -33,7 +33,7 @@ describe "Loco" do
       Loco.set(@label2, :text_color, UIColor.greenColor)
     end
     
-    it "should be able to create a binding on chained Objective-C properties" do
+    it "can create a binding on chained Objective-C properties" do
       @button1 = UIButton.alloc.initWithFrame([[0, 0], [200, 50]])
       @button2 = UIButton.alloc.initWithFrame([[0, 0], [200, 50]])
       @binding = Loco.bind(@button1, "titleLabel.text").to(@button2, "titleLabel.text")
@@ -61,7 +61,7 @@ describe "Loco" do
       end
     end
     
-    it "should be able to create a binding on a Loco::Observable property" do
+    it "can create a binding on a Loco::Observable property" do
       @user1 = BindingMethodsSpec::User.new
       @user2 = BindingMethodsSpec::User.new
       @binding = Loco.bind(@user1, :first_name).to(@user2, :first_name)
@@ -73,7 +73,7 @@ describe "Loco" do
       Loco.set(@user2, :first_name, "Hello World")
     end
     
-    it "should be able to remove a binding of a Loco::Observable property" do
+    it "can remove a binding of a Loco::Observable property" do
       Loco.remove_binding(@binding)
       Loco.observers.should.equal({})
     end
@@ -106,7 +106,7 @@ describe "Loco" do
       @user2.set(:first_name, "Hello World")
     end
     
-    it "should be able to create a binding on chained Loco::Observable properties" do
+    it "can create a binding on chained Loco::Observable properties" do
       @user1 = BindingMethodsSpec::User.new
       @user2 = BindingMethodsSpec::User.new
       @binding = Loco.bind(@user1, "first_name").to(@user2, "car.driver.first_name")

@@ -1,7 +1,7 @@
 module Loco
   
   class Property
-    attr_accessor :default, :is_cached, :observers, :proc, :target, :type, :value
+    attr_accessor :default, :is_cached, :key, :observers, :proc, :target, :type, :value
     
     def get_value
       if self.is_cached || self.proc.nil?
@@ -57,6 +57,7 @@ module Loco
         self.observers << Loco.observe(self.target, key_path, lambda {|target, key_path, old_value, new_value|
           # Mark the property as not cached when any of the key paths change
           self.is_cached = false
+          Loco.property_did_change(target, self.key)
         })
       end
     end

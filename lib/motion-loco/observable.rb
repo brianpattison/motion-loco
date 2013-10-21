@@ -16,7 +16,9 @@ module Loco
     end
     
     def dealloc
-      # TODO: Remove observers
+      Loco.observers_for_target(self).each do |observer|
+        Loco.remove_observer(observer)
+      end
       super
     end
     
@@ -82,6 +84,7 @@ module Loco
           new_property = {}
           new_property[property_name] = {
             default: options[:default],
+            key: property_name,
             type: type
           }
           
@@ -112,6 +115,7 @@ module Loco
         properties = self.class_properties
         new_property = {}
         new_property[property_name] = {
+          key: property_name,
           proc: proc
         }
           

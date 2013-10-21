@@ -1,7 +1,7 @@
 describe "Loco" do
   describe "- Observer Methods" do
     
-    it "should be able to create an observer on an Objective-C property" do
+    it "can create an observer on an Objective-C property" do
       @label = UILabel.alloc.initWithFrame([[0, 0], [100, 100]])
       @test_string = "Test"
       
@@ -17,7 +17,7 @@ describe "Loco" do
       Loco.set(@label, :text, "Hello World")
     end
     
-    it "should be able to remove an observer of an Objective-C property" do
+    it "can remove an observer of an Objective-C property" do
       Loco.remove_observer(@observer)
       Loco.observers.should.equal({})
     end
@@ -54,7 +54,7 @@ describe "Loco" do
       Loco.set(@label, :text_color, UIColor.greenColor)
     end
     
-    it "should be able to create an observer on chained Objective-C properties" do
+    it "can create an observer on chained Objective-C properties" do
       @button = UIButton.alloc.initWithFrame([[0, 0], [200, 50]])
       @test_string = "Test"
       
@@ -76,6 +76,7 @@ describe "Loco" do
       class User
         include Loco::Observable
         property :first_name, :string
+        property :last_name, :string
         property :car
         property :friends, :array
       end
@@ -87,7 +88,7 @@ describe "Loco" do
       end
     end
     
-    it "should be able to create an observer on a Loco::Observable property" do
+    it "can create an observer on a Loco::Observable property" do
       @user = ObserverMethodsSpec::User.new
       @test_string = "Test"
       
@@ -105,7 +106,7 @@ describe "Loco" do
       @user.set(:first_name, "Hello World")
     end
     
-    it "should be able to remove an observer of a Loco::Observable property" do
+    it "can remove an observer of a Loco::Observable property" do
       Loco.remove_observer(@observer)
       Loco.observers.should.equal({})
     end
@@ -144,7 +145,7 @@ describe "Loco" do
       @user.set(:first_name, "Hello World")
     end
     
-    it "should be able to create an observer on chained Loco::Observable properties" do
+    it "can create an observer on chained Loco::Observable properties" do
       @user = ObserverMethodsSpec::User.new
       @test_string = "Test"
       
@@ -177,7 +178,7 @@ describe "Loco" do
       Loco.set(@user, :car, @car)
     end
     
-    it "should be able to observe changes to each property in an array" do
+    it "can observe changes to each property in an array" do
       @user = ObserverMethodsSpec::User.new
       @friend1 = ObserverMethodsSpec::User.new
       @friend2 = ObserverMethodsSpec::User.new
@@ -213,6 +214,56 @@ describe "Loco" do
       end
       
       Loco.set(@user, :friends, [@friend1, @friend2])
+    end
+    
+    it "can observe a computed property" do
+      module ObserverMethodsSpec
+        class User
+          property :full_name, lambda {|user|
+            "#{user.get(:first_name)} #{user.get(:last_name)}"
+          }.property(:first_name, :last_name)
+        end
+      end
+      
+      @user = ObserverMethodsSpec::User.new
+      @test_string = "Test"
+      
+      @observer = Loco.observe(@user, :full_name, lambda{|target, key_path, old_value, new_value|
+        @test_string = new_value
+      })
+    
+      wait 0.1 do
+        @test_string.should.equal "Hello "
+        
+        wait 0.1 do
+          @test_string.should.equal "Hello World"
+          
+          Loco.remove_observer(@observer)
+        end
+        
+        @user.set(:last_name, "World")
+      end
+    
+      @user.set(:first_name, "Hello")
+    end
+    
+    it "only calculates computed properties when needed" do
+      @user = ObserverMethodsSpec::User.new(
+        first_name: "Brian", 
+        last_name: "Pattison"
+      )
+      
+      @user.properties[:fullName].value.should.equal nil
+      @user.properties[:fullName].is_cached.should.equal false
+      
+      @user.get(:full_name).should.equal "Brian Pattison"
+      @user.properties[:fullName].value.should.equal "Brian Pattison"
+      @user.properties[:fullName].is_cached.should.equal true
+      
+      @user.set(:first_name, "Kirsten")
+      @user.properties[:fullName].value.should.equal "Brian Pattison"
+      @user.properties[:fullName].is_cached.should.equal false
+      @user.get(:full_name).should.equal "Kirsten Pattison"
     end
     
   end

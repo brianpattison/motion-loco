@@ -32,7 +32,7 @@ module Loco
     @observers ||= {}
   end
   
-  def self.property_did_change(target, key, old_value, new_value)
+  def self.property_did_change(target, key, old_value=nil, new_value=nil)
     self.observers_for_target_and_key(target, key).each do |observer|
       observer.value_did_change
     end

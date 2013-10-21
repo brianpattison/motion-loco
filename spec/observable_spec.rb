@@ -7,7 +7,7 @@ describe "Loco::Observable" do
   
   describe "- Loco::Observable Model" do
     
-    it "should be able to include it in a class" do
+    it "can include it in a class" do
       should.not.raise(NoMethodError, TypeError) do
         module ObservableSpec
           class User
@@ -28,8 +28,8 @@ describe "Loco::Observable" do
       end
       
       ObservableSpec::User.class_properties.should.equal({ 
-        firstName: { default: nil, type: nil }, 
-        lastName:  { default: nil, type: nil }
+        firstName: { default: nil, key: :firstName, type: nil }, 
+        lastName:  { default: nil, key: :lastName, type: nil }
       })
     end
     
@@ -84,12 +84,6 @@ describe "Loco::Observable" do
         end
       end
       
-      ObservableSpec::User.class_properties.should.equal({ 
-        firstName: { default: nil, type: nil }, 
-        lastName:  { default: nil, type: nil },
-        age:       { default: nil, type: :integer }
-      })
-      
       @user = ObservableSpec::User.new
       @user.set(:age, "100")
       @user.get(:age).should.equal 100
@@ -105,14 +99,6 @@ describe "Loco::Observable" do
         end
       end
       
-      ObservableSpec::User.class_properties.should.equal({ 
-        firstName:   { default: nil,  type: nil }, 
-        lastName:    { default: nil,  type: nil },
-        age:         { default: nil,  type: :integer },
-        likesPizza:  { default: true, type: :boolean },
-        slicesEaten: { default: 0,    type: :integer }
-      })
-      
       @user = ObservableSpec::User.new
       @user.get(:likes_pizza).should.equal true
       @user.get(:slices_eaten).should.equal 0
@@ -126,15 +112,6 @@ describe "Loco::Observable" do
           end
         end
       end
-      
-      ObservableSpec::User.class_properties.should.equal({ 
-        firstName:   { default: nil,  type: nil }, 
-        lastName:    { default: nil,  type: nil },
-        age:         { default: nil,  type: :integer },
-        likesPizza:  { default: true, type: :boolean },
-        slicesEaten: { default: 0,    type: :integer },
-        status:      { default: "waiting for pizza", type: nil }
-      })
       
       @user = ObservableSpec::User.new
       @user.get(:status).should.equal "waiting for pizza"
@@ -168,16 +145,6 @@ describe "Loco::Observable" do
         end
       end
       
-      ObservableSpec::Admin.class_properties.should.equal({ 
-        firstName:   { default: nil,  type: nil }, 
-        lastName:    { default: nil,  type: nil },
-        age:         { default: nil,  type: :integer },
-        likesPizza:  { default: true, type: :boolean },
-        slicesEaten: { default: 0,    type: :integer },
-        status:      { default: "waiting for pizza", type: nil },
-        isAdmin:     { default: true, type: :boolean }
-      })
-      
       @admin = ObservableSpec::Admin.new(first_name: "Brian")
       @admin.get(:first_name).should.equal "Brian"
       @admin.get(:last_name).should.equal nil
@@ -188,16 +155,7 @@ describe "Loco::Observable" do
       @admin.get(:is_admin).should.equal true
     end
     
-    it "should not pass the child properties back up to the parent class" do
-      ObservableSpec::User.class_properties.should.equal({ 
-        firstName:   { default: nil,  type: nil }, 
-        lastName:    { default: nil,  type: nil },
-        age:         { default: nil,  type: :integer },
-        likesPizza:  { default: true, type: :boolean },
-        slicesEaten: { default: 0,    type: :integer },
-        status:      { default: "waiting for pizza", type: nil }
-      })
-      
+    it "should not pass the child properties back up to the parent class" do      
       @user = ObservableSpec::User.new(slicesEaten: 5)
       @user.get(:first_name).should.equal nil
       @user.get(:last_name).should.equal nil
@@ -208,7 +166,7 @@ describe "Loco::Observable" do
       @user.get(:is_admin).should.equal nil
     end
     
-    it "should be able to override defaults on child classes" do
+    it "can override defaults on child classes" do
       module ObservableSpec
         class BadAdmin < ObservableSpec::Admin
           property :is_admin, :boolean, default: false
