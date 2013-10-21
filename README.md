@@ -6,9 +6,11 @@ computed properties, and observers. **And Ember-Data inspired [data](#locofixtur
 
 ## What's New!
 
-### September 19th, 2013
+### October 20th, 2013
 
-Motion-Loco is being actively developed again after a few months of nothing, so yay!
+Motion-Loco 0.4.0 is going to be a complete rewrite, and it's going to be awesome. You can check out the progress here:
+
+<https://github.com/brianpattison/motion-loco/tree/new_hotness>
 
 ## Installation
 
