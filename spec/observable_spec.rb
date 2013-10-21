@@ -201,5 +201,32 @@ describe "Loco::Observable" do
       @user.get(:fullName).should.equal "Brian Pattison"
     end
     
+    it "can define a computed property with setter" do
+      should.not.raise(NoMethodError, TypeError) do
+        module ObservableSpec
+          class User
+            property :full_name, lambda {|user, full_name|
+              if full_name
+                split_name = full_name.split(" ")
+                user.set(:first_name, split_name[0])
+                user.set(:last_name, split_name[1])
+              else
+                full_name = "#{user.get(:first_name)} #{user.get(:last_name)}"
+              end
+              full_name
+            }.property(:first_name, :last_name)
+          end
+        end
+      end
+      
+      @user = ObservableSpec::User.new
+      @user.get(:first_name).should.equal nil
+      @user.get(:last_name).should.equal nil
+      
+      @user.set(:full_name, "Brian Pattison")
+      @user.get(:first_name).should.equal "Brian"
+      @user.get(:last_name).should.equal "Pattison"
+    end
+    
   end
 end

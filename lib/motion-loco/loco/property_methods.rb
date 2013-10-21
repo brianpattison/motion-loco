@@ -95,7 +95,7 @@ private
       old_value = target.send(:get_property_value, key)
       new_value = target.send(:set_property_value, key, value)
     end
-    property_did_change(target, key, old_value, new_value)
+    property_did_change(target, key, old_value, new_value) if old_value != new_value
     new_value
   end
   

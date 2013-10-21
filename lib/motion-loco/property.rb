@@ -18,7 +18,11 @@ module Loco
         end
       else
         self.is_cached = true
-        self.value = self.proc.call(self.target)
+        if self.proc.arity == 2
+          self.value = self.proc.call(self.target, nil)
+        else
+          self.value = self.proc.call(self.target)
+        end
       end
       self.value
     end
@@ -39,7 +43,12 @@ module Loco
     
     def set_value(value)
       self.is_cached = false
-      self.value = value
+      if self.proc && self.proc.arity == 2
+        self.value = self.proc.call(self.target, value)
+      else
+        self.value = value
+      end
+      self.value
     end
     
     def transform_value(value)
