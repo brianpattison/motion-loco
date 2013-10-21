@@ -1,7 +1,7 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
-guard 'motion', all_on_start: false, all_after_pass: false do
+guard "motion", all_on_start: false, all_after_pass: false do
   watch(%r{^spec/.+_spec\.rb$})
 
   # RubyMotion gem example

@@ -71,8 +71,8 @@ end
 @user.set(:lastName, "Pattison") # "Pattison"
 
 # Chained property getters/setters
-@user.get('group.name') # "The Awesome Group"
-@user.set('group.name', "The Humble Group")
+@user.get("group.name") # "The Awesome Group"
+@user.set("group.name", "The Humble Group")
 
 # Properties won't be KVO compliant, but it will
 # be easy to create observers for any observable object.
