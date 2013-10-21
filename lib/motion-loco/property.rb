@@ -3,6 +3,13 @@ module Loco
   class Property
     attr_accessor :default, :is_cached, :key, :observers, :proc, :target, :type, :value
     
+    def dealloc
+      self.observers.each do |observer|
+        Loco.remove_observer(observer)
+      end
+      super
+    end
+    
     def get_value
       if self.is_cached || self.proc.nil?
         unless self.is_cached
