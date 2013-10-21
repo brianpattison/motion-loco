@@ -222,5 +222,26 @@ describe "Loco::Observable" do
       @good_admin.get(:is_admin).should.equal true
     end
     
+    it "can define a computed property" do
+      should.not.raise(NoMethodError, TypeError) do
+        module ObservableSpec
+          class User
+            property :full_name, lambda {|user|
+              "#{user.get(:first_name)} #{user.get(:last_name)}"
+            }.property(:first_name, :last_name)
+          end
+        end
+      end
+      
+      @user = ObservableSpec::User.new
+      @user.get(:full_name).should.equal " "
+      
+      @user.set(:first_name, "Brian")
+      @user.get(:full_name).should.equal "Brian "
+      
+      @user.set(:lastName, "Pattison")
+      @user.get(:fullName).should.equal "Brian Pattison"
+    end
+    
   end
 end

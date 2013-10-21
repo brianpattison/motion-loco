@@ -77,6 +77,7 @@ describe "Loco" do
         include Loco::Observable
         property :first_name, :string
         property :car
+        property :friends, :array
       end
       
       class Car
@@ -174,6 +175,44 @@ describe "Loco" do
       @car.set(:driver, ObserverMethodsSpec::User.new(first_name: "Hello World"))
       
       Loco.set(@user, :car, @car)
+    end
+    
+    it "should be able to observe changes to each property in an array" do
+      @user = ObserverMethodsSpec::User.new
+      @friend1 = ObserverMethodsSpec::User.new
+      @friend2 = ObserverMethodsSpec::User.new
+      @friend_names_change_count = 0
+      
+      @observer = Loco.observe(@user, "friends.@each.first_name", lambda{|target, key, old_value, new_value|
+        @friend_names_change_count += 1
+      })
+      
+      wait 0.1 do
+        @friend_names_change_count.should.equal 1
+        
+        wait 0.1 do
+          @friend_names_change_count.should.equal 2
+          
+          wait 0.1 do
+            @friend_names_change_count.should.equal 3
+          
+            wait 0.1 do
+              @friend_names_change_count.should.equal 4
+        
+              Loco.remove_observer(@observer)
+              Loco.observers.should.equal({})
+            end
+            
+            Loco.set(@user, :friends, [@friend2])
+          end
+          
+          Loco.set(@friend2, :first_name, "Billy")
+        end
+        
+        Loco.set(@friend1, :first_name, "Joe")
+      end
+      
+      Loco.set(@user, :friends, [@friend1, @friend2])
     end
     
   end

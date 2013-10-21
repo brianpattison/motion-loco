@@ -1,7 +1,11 @@
 module Loco
   
   class Observer
-    attr_accessor :key, :key_path, :next_observer, :proc, :target, :value
+    attr_accessor :array_observers, :key, :key_path, :next_observer, :proc, :target, :value
+    
+    def array_observers
+      @array_observers ||= []
+    end
     
     def initialize(params={})
       super
@@ -28,16 +32,33 @@ module Loco
   private
   
     def update_next_observer
+      split_path = self.key_path.split(".")
+      
+      # Remove any previous observers
+      self.array_observers.each do |observer|
+        Loco.remove_observer(observer)
+      end
       if self.next_observer
-        self.next_observer.remove
+        Loco.remove_observer(self.next_observer)
       end
       
-      split_path = self.key_path.split(".")
-      if split_path.length > 1
+      # Observe changes down the key_path chain
+      if split_path.length > 1 && split_path[0] != "@each" && split_path[1] != "@each"
         next_target = Loco.get(self.target, split_path[0])
         next_path = split_path[1..(split_path.length-1)].join(".")
         if next_target
           self.next_observer = Loco.observe(next_target, next_path, lambda{|target, key_path, old_value, new_value|
+            self.value_did_change
+          })
+        end
+      end
+      
+      # Observe property of each object in array
+      if split_path[1] && split_path[1] == "@each"
+        array_target = Loco.get(self.target, split_path[0])
+        each_path = split_path[2..(split_path.length-1)].join(".")
+        array_target.each do |each_target|
+          self.array_observers << Loco.observe(each_target, each_path, lambda{|target, key_path, old_value, new_value|
             self.value_did_change
           })
         end

@@ -9,19 +9,9 @@ module Loco
         @properties ||= {}
       end
       
-      attr_accessor :computed_properties
-      def computed_properties
-        @computed_properties ||= {}
-      end
-      
       class_attribute :class_properties
       def self.class_properties
         @class_properties ||= {}
-      end
-      
-      class_attribute :class_computed_properties
-      def self.class_computed_properties
-        @class_computed_properties ||= {}
       end
     end
     
@@ -119,13 +109,13 @@ module Loco
       def computed_property(property_name, proc)
         property_name = Loco.normalize_key(property_name)
         
-        computed_properties = self.class_computed_properties
-        new_computed_property = {}
-        new_computed_property[property_name] = {
+        properties = self.class_properties
+        new_property = {}
+        new_property[property_name] = {
           proc: proc
         }
           
-        self.class_computed_properties = computed_properties.merge(new_computed_property)
+        self.class_properties = properties.merge(new_property)
       end
       
     end
@@ -143,10 +133,6 @@ module Loco
     def initialize_properties
       self.class.class_properties.each do |key, options|
         self.properties[key] = Loco::Property.new(options.merge({ target: self }))
-      end
-      
-      self.class.class_computed_properties.each do |key, options|
-        self.computed_properties[key] = Loco::Property.new(options.merge({ target: self }))
       end
     end
     

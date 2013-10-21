@@ -43,6 +43,9 @@ module Loco
     
     observers_for_target_and_key.delete(observer)
     
+    observer.array_observers.each do |observer|
+      remove_observer(observer)
+    end
     remove_observer(observer.next_observer) if observer.next_observer
     
     # Remove empty keys with no observers left
