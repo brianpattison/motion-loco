@@ -38,7 +38,7 @@ class User < Loco::Model
   property :login_count, :integer, default: 0
   
   # Computed properties
-  property :full_name, -> {|user|
+  property :full_name, lambda {|user|
     "#{user.get(:first_name)} #{user.get(:last_name)}"
   }.property(:first_name, :last_name)
   
@@ -48,13 +48,13 @@ class User < Loco::Model
   
   # Computed properties will be able to 
   # observe a chain of properties
-  property :post_count, -> {|user|
+  property :post_count, lambda {|user|
     user.posts.length
   }.property("posts.length")
   
   # Computed properties based on changes made
   # to records inside a Loco::RecordArray
-  property :published_posts, -> {|user|
+  property :published_posts, lambda {|user|
     user.posts.select{|post|
       post.get(:is_published)
     }
@@ -76,10 +76,20 @@ end
 
 # Properties won't be KVO compliant, but it will
 # be easy to create observers for any observable object.
-@user.observe(:login_count, -> {|user|
-  new_count = user.get(:login_count)
-  user.remove_observer(:login_count)
+@observer = Loco.observe(@user, :login_count, lambda {|target, key_path, old_value, new_value|
+  # Do something when the login_count changes
 })
+@observer.remove # Remove observer
+
+# Bindings are just as easy to create
+@binding = Loco.bind(@team_label, :text).to(@user, "team.name")
+# Changes to @user.team or @user.team.is_admin will propagate to @user.is_admin
+@binding.remove # Remove binding
+
+# Shortcuts will also exist for creating bindings
+@team_label.text_binding = [@user, "team.name"]
+# or camelized if you prefer
+@team_label.textBinding = [@user, "team.name"]
 ```
 
 ## Contributing
