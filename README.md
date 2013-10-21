@@ -92,6 +92,34 @@ end
 @team_label.textBinding = [@user, "team.name"]
 ```
 
+## Saving and Loading Records with Data Adapters
+
+Another major overhaul coming here too. Saving and loading records will look something like this:
+
+```
+# Promise all the things!
+@user = User.new(first_name: "Brian")
+@user.save.then(lambda {|user|
+  # User is saved!
+}, lambda {|user, error|
+  # Error saving user
+})
+
+@user = User.find(1)
+@user.then(lambda {|user|
+  # User is loaded!
+}, lambda {|user, error|
+  # Error loading user
+})
+
+@posts = @user.posts
+@posts.then(lambda {|posts|
+  # Posts are loaded!
+}, lambda {|posts, error|
+  # Error loading posts
+})
+```
+
 ## Contributing
 
 1. Fork it
