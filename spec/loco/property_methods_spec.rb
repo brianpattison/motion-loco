@@ -59,17 +59,17 @@ describe "Loco" do
     
     it "should set the value of Loco::Observable properties on an object" do
       @user = PropertyMethodsSpec::User.new
-      Loco.set(@user, :first_name, "Kirsten").should.equal "Kirsten"
+      Loco.set(@user, :first_name, "Kirsten")
       Loco.get(@user, :first_name).should.equal "Kirsten"
     end
     
     it "should accept underscore and camelized Loco::Observable property names" do
       @user = PropertyMethodsSpec::User.new
       
-      Loco.set(@user, :first_name, "Brian").should.equal "Brian"
+      Loco.set(@user, :first_name, "Brian")
       Loco.get(@user, :firstName).should.equal "Brian"
       
-      Loco.set(@user, :firstName, "Kirsten").should.equal "Kirsten"
+      Loco.set(@user, :firstName, "Kirsten")
       Loco.get(@user, :first_name).should.equal "Kirsten"
     end
     
@@ -82,13 +82,13 @@ describe "Loco" do
       Loco.set(@user, :car, @car)
       
       Loco.get(@user, "car.color").should.equal "blue"
-      Loco.set(@user, "car.color", "red").should.equal "red"
+      Loco.set(@user, "car.color", "red")
       Loco.get(@user, "car.color").should.equal "red"
       
       Loco.get(@user, "car.driver.first_name").should.equal nil
       Loco.set(@car, :driver, PropertyMethodsSpec::User.new(first_name: "Brian"))
       Loco.get(@user, "car.driver.first_name").should.equal "Brian"
-      Loco.set(@user, "car.driver.first_name", "Billy Bob").should.equal "Billy Bob"
+      Loco.set(@user, "car.driver.first_name", "Billy Bob")
       Loco.get(@user, "car.driver.first_name").should.equal "Billy Bob"
     end
     

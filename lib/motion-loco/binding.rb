@@ -20,6 +20,7 @@ module Loco
       self.to_target = to_target
       self.to_key_path = to_key_path
       update_observers
+      update_value
       self
     end
     
@@ -29,13 +30,19 @@ module Loco
     
   private
   
+
+  
     def update_observers
       self.remove_observers
       self.to_observer = Loco.observe(self.to_target, self.to_key_path, lambda{|target, key_path, old_value, new_value|
-        if self.from_target
-          Loco.set(self.from_target, self.from_key_path, new_value)
-        end
+        update_value
       })
+    end
+    
+    def update_value
+      if self.from_target
+        Loco.set(self.from_target, self.from_key_path, Loco.get(self.to_target, self.to_key_path))
+      end
     end
     
   end

@@ -10,7 +10,6 @@ describe "Loco" do
       wait 0.1 do
         Loco.get(@label1, :text).should.equal "Hello World"
       end
-      
       Loco.set(@label2, :text, "Hello World")
     end
     
