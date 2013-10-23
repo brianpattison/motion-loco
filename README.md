@@ -49,13 +49,13 @@ class User < Loco::Model
   # Computed properties will be able to 
   # observe a chain of properties
   property :post_count, lambda {|user|
-    user.posts.length
+    user.get("posts.length")
   }.property("posts.length")
   
   # Computed properties based on changes made
   # to records inside a Loco::RecordArray
   property :published_posts, lambda {|user|
-    user.posts.select{|post|
+    user.get(:posts).select{|post|
       post.get(:is_published)
     }
   }.property("posts.@each.is_published")
