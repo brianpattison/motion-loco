@@ -77,10 +77,8 @@ module Loco
   # @param [Object] old_value
   # @param [Object] new_value
   def self.property_did_change(target, key, old_value=nil, new_value=nil)
-    observers = self.observers_for_target_and_key(target, key)
-    queue = Dispatch::Queue.concurrent("#{NSBundle.mainBundle.bundleIdentifier}.loco.observers")
-    queue.apply(observers.length) do |index|
-      observers[index].value_did_change
+    self.observers_for_target_and_key(target, key).each do |observer|
+      observer.value_did_change
     end
   end
   
