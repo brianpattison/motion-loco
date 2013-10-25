@@ -16,8 +16,18 @@ module Loco
     end
     
     def dealloc
-      Loco.observers_for_target(self).each do |observer|
-        Loco.remove_observer(observer)
+      observers = Loco.observers_for_target(self)
+      if observers
+        observers.each do |key, observers_for_key|
+          if observers_for_key
+            observers_for_key.each do |observer|
+              Loco.remove_observer(observer)
+            end
+          end
+        end
+      end
+      Loco.bindings_for_target(self).each do |binding|
+        Loco.remove_binding(binding)
       end
       super
     end
@@ -127,11 +137,15 @@ module Loco
   private
   
     def get_property_value(key)
-      if self.properties[key]
-        self.properties[key].get_value
-      else
-        # Throw no method error?
-      end
+      value = nil
+      properties_queue.sync {
+        if self.properties[key]
+          value = self.properties[key].get_value
+        else
+          # Throw no method error?
+        end
+      }
+      value
     end
     
     def initialize_properties
@@ -140,12 +154,19 @@ module Loco
       end
     end
     
+    def properties_queue
+      @properties_queue ||= Dispatch::Queue.new("#{NSBundle.mainBundle.bundleIdentifier}.loco.properties.#{self.object_id}")
+    end
+    
     def set_property_value(key, value)
-      if self.properties[key]
-        self.properties[key].set_value(value)
-      else
-        # Throw no method error?
-      end
+      properties_queue.async {
+        if self.properties[key]
+          self.properties[key].set_value(value)
+        else
+          # Throw no method error?
+        end
+      }
+      value
     end
   end
   

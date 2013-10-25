@@ -8,18 +8,16 @@ module Loco
   # @return [Object]
   def self.get(target, path=nil)
     value = nil
-    properties_queue.sync {
-      # If the target is a string, then we should be
-      # trying to get a value from a Loco::Controller
-      # Ex. Loco.get("GreetingController.message") # "Hello"
-      if target.is_a?(String)
-        target, path = get_target_and_path_from_string(target)
-      end
-    
-      target, path = get_last_target_and_path(target, path)
-    
-      value = get_value(target, path)
-    }
+    # If the target is a string, then we should be
+    # trying to get a value from a Loco::Controller
+    # Ex. Loco.get("GreetingController.message") # "Hello"
+    if target.is_a?(String)
+      target, path = get_target_and_path_from_string(target)
+    end
+  
+    target, path = get_last_target_and_path(target, path)
+  
+    value = get_value(target, path)
     value
   end
   
@@ -37,19 +35,17 @@ module Loco
   # @param [String] path
   # @param [Object] value
   def self.set(target, path, value=nil)
-    properties_queue.sync {
-      # If the target is a string, then we should be
-      # trying to set a value on a Loco::Controller
-      # Ex. Loco.set("GreetingController.message", "Hello")
-      if target.is_a?(String)
-        value = path
-        target, path = get_target_and_path_from_string(target)
-      end
+    # If the target is a string, then we should be
+    # trying to set a value on a Loco::Controller
+    # Ex. Loco.set("GreetingController.message", "Hello")
+    if target.is_a?(String)
+      value = path
+      target, path = get_target_and_path_from_string(target)
+    end
+  
+    target, path = get_last_target_and_path(target, path)
     
-      target, path = get_last_target_and_path(target, path)
-      
-      value = set_value(target, path, value)
-    }
+    value = set_value(target, path, value)
     value
   end
   
@@ -91,10 +87,6 @@ private
       value = target.send(:get_property_value, key)
     end
     value
-  end
-  
-  def self.properties_queue
-    @properties_queue ||= Dispatch::Queue.concurrent("#{NSBundle.mainBundle.bundleIdentifier}.loco.properties")
   end
   
   def self.set_value(target, key, value)

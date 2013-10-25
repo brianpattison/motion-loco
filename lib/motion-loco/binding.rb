@@ -1,7 +1,21 @@
 module Loco
   
   class Binding
-    attr_accessor :from_key_path, :from_observer, :from_target, :to_key_path, :to_observer, :to_target
+    attr_accessor :from_key_path, :from_observer, :from_target, :from_target_key, :to_key_path, :to_observer, :to_target, :to_target_key
+    
+    def dealloc
+      self.remove_observers
+      super
+    end
+    
+    def from_observer=(observer)
+      @from_observer = WeakRef.new(observer)
+    end
+    
+    def from_target=(target)
+      @from_target_key = Loco.key_for_target(target)
+      @from_target = WeakRef.new(target)
+    end
     
     def initialize(from_target=nil, from_key_path=nil, to_target=nil, to_key_path=nil)
       self.from_target = from_target
@@ -24,13 +38,22 @@ module Loco
       self
     end
     
+    def to_observer=(observer)
+      @to_observer = WeakRef.new(observer)
+    end
+    
+    def to_target=(target)
+      @to_target_key = Loco.key_for_target(target)
+      @to_target = WeakRef.new(target)
+    end
+    
     def self.from(from_target, from_key_path)
-      new(from_target, from_key_path)
+      binding = new(from_target, from_key_path)
+      Loco.bindings_for_target(from_target) << binding
+      binding
     end
     
   private
-  
-
   
     def update_observers
       self.remove_observers
@@ -40,7 +63,7 @@ module Loco
     end
     
     def update_value
-      if self.from_target
+      if self.from_target && self.to_target
         Loco.set(self.from_target, self.from_key_path, Loco.get(self.to_target, self.to_key_path))
       end
     end
