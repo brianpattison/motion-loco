@@ -1,14 +1,4 @@
 module Loco
-  
-  def self.bindings
-    @bindings ||= {}
-  end
-  
-  def self.bindings_for_target(target)
-    key = key_for_target(target)
-    bindings[key] ||= []
-  end
-  
   # Step one to creating a binding between two objects.
   # 
   # Example for binding a label to a user's name:
@@ -25,14 +15,7 @@ module Loco
   # Remove a binding to prevent future changes from propagating.
   # @param [Loco::Binding] binding
   def self.remove_binding(binding)
-    bindings = self.bindings[binding.from_target_key]
-    if bindings
-      bindings.delete(binding)
-      if bindings.length == 0
-        self.bindings.delete(binding.from_target_key)
-      end
-    end
-    binding.dealloc
+    binding.remove
   end
   
 end

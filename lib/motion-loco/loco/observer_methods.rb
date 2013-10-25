@@ -36,11 +36,7 @@ module Loco
       key_path: key_path,
       proc: proc 
     )
-    target_key = key_for_target(target)
-    key = observer.key
-    self.observers[target_key] ||= {}
-    self.observers[target_key][key] ||= []
-    self.observers[target_key][key] << observer
+    observers_for_target_and_key(target, observer.key) << observer
     observer
   end
   
@@ -51,7 +47,8 @@ module Loco
   # @param [Object] target
   # @return [Hash]
   def self.observers_for_target(target)
-    self.observers[key_for_target(target)]
+    key = key_for_target(target)
+    observers[key] ||= {}
   end
   
   # Returns an array of Loco::Observers that are to
@@ -60,11 +57,8 @@ module Loco
   # @param [String] key
   # @return [Array]
   def self.observers_for_target_and_key(target, key)
-    observers = observers_for_target(target)
-    if observers
-      observers = observers[normalize_key(key)]
-    end
-    observers
+    key = normalize_key(key)
+    observers_for_target(target)[key] ||= []
   end
   
   # Returns a Hash where the keys are unique
@@ -83,11 +77,8 @@ module Loco
   # @param [Object] old_value
   # @param [Object] new_value
   def self.property_did_change(target, key, old_value=nil, new_value=nil)
-    observers = self.observers_for_target_and_key(target, key)
-    if observers
-      observers.each do |observer|
-        observer.value_did_change
-      end
+    self.observers_for_target_and_key(target, key).each do |observer|
+      observer.value_did_change
     end
   end
   
@@ -95,13 +86,9 @@ module Loco
   # changes from being propagated.
   # @param [Loco::Observer] observer
   def self.remove_observer(observer)
-    observers_for_target_and_key = observers[observer.target_key][observer.key]
+    observers_for_target_and_key = self.observers_for_target_and_key(observer.target, observer.key)
     
-    observers_for_target_and_key.each do |observer_obj|
-      if observer_obj.object_id == observer.object_id
-        observers_for_target_and_key.delete(observer_obj)
-      end
-    end
+    observers_for_target_and_key.delete(observer)
     
     observer.array_observers.each do |observer|
       remove_observer(observer)
@@ -119,8 +106,23 @@ module Loco
         self.observers.delete(target)
       end
     end
-    
-    observer.dealloc
+  end
+  
+  # Remove all Loco::Observers from a target and/or key 
+  # path to prevent any future changes from being propagated.
+  # @param [Object] target
+  # @param [String] key_path
+  def self.remove_observers(target, key_path=nil)
+    if key_path.nil?
+      self.observers.delete(key_for_target(target))
+    else
+      key_path = normalize_path(key_path)
+      observers = observers_for_target(key_path)
+      observers.delete(key_path)
+      if observers.length == 0
+        self.observers.delete(key_for_target(target))
+      end
+    end
   end
   
 end

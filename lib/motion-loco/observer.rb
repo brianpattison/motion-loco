@@ -1,7 +1,7 @@
 module Loco
   
   class Observer
-    attr_accessor :array_observers, :key, :key_path, :next_observer, :proc, :target, :target_key, :value
+    attr_accessor :array_observers, :key, :key_path, :next_observer, :proc, :target, :value
     
     def array_observers
       @array_observers ||= []
@@ -15,24 +15,10 @@ module Loco
       self.proc = params[:proc]
       self.value = Loco.get(self.target, self.key_path)
       update_next_observer
-      self
-    end
-    
-    def next_observer=(observer)
-      @next_observer = WeakRef.new(observer)
-    end
-    
-    def proc=(proc)
-      @proc = WeakRef.new(proc)
     end
     
     def remove
       Loco.remove_observer(self)
-    end
-    
-    def target=(target)
-      @target_key = Loco.key_for_target(target)
-      @target = WeakRef.new(target)
     end
     
     def value_did_change
